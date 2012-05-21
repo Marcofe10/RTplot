@@ -32,13 +32,16 @@ class PlotxyFLTK: public Fl_Box {
         static void zoomInc(Fl_Widget *widget, void *userdata);
         static void zoomDec(Fl_Widget *widget, void *userdata);
         //Autoscale Function
-        static void autoScale(Fl_Widget *widget, void *userdata);
+        static void scale(Fl_Widget *widget, void *userdata);
         //Autoscale graph during plot
         static void autoScaleBehaviour(Fl_Widget *widget, void *userdata);
+        
+        static void autoScale(Fl_Widget *widget, void *userdata);
         bool enableAutoScaleWhileGraph;
         
         //Many scale,translate parameters
-        float scale_factor;
+        float scale_factor_x;
+        float scale_factor_y;
         int translate_value;
         int translate_x,translate_y;
         

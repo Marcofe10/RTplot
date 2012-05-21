@@ -25,10 +25,11 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
     initial_x = 0;
     initial_y = 0;
 
-    this->scale_factor = 1;
+    this->scale_factor_x = 1;
+    this->scale_factor_y = 1;
     this->translate_x = x();
     this->translate_y = (y() + (h() / 2));
-    this->enableAutoScaleWhileGraph = 0;
+    this->enableAutoScaleWhileGraph = false;
     this->vievedMaxValue = 0;
     this->vievedMinValue = 0;
 }
@@ -43,10 +44,16 @@ void PlotxyFLTK::zoomInc(Fl_Widget *widget, void *userdata) {
     cout << "*** ZOOM + ***" << endl;
     PlotxyFLTK *in = (PlotxyFLTK*)userdata;
 
-    in->scale_factor /= 2;
-    if (in->scale_factor <= 0)
-        in->scale_factor = 1;
-    cout << "Zoom +:" << in->scale_factor << endl;
+    in->scale_factor_y /= 2;
+    if (in->scale_factor_y <= 0)
+        in->scale_factor_y = 1;
+    
+    in->scale_factor_x /= 2;
+    if (in->scale_factor_x <= 0)
+        in->scale_factor_x = 1;
+    
+    cout << "Zoom +| scale_factor_x:" << in->scale_factor_y<<" scale_factor_x:" << in->scale_factor_x << endl;
+    
     in->redraw();
 
 }
@@ -54,23 +61,35 @@ void PlotxyFLTK::zoomInc(Fl_Widget *widget, void *userdata) {
 void PlotxyFLTK::zoomDec(Fl_Widget *widget, void *userdata) {
     cout << "*** ZOOM - ***" << endl;
     PlotxyFLTK *in = (PlotxyFLTK*)userdata;
-    if (in->scale_factor >= 200000)
-        in->scale_factor = 200000;
-    in->scale_factor *= 2;
-    cout << "Zoom -:" << in->scale_factor << endl;
+    if (in->scale_factor_y >= 200000)
+        in->scale_factor_y = 200000;
+    in->scale_factor_y *= 2;
+    
+     if (in->scale_factor_x >= 200000)
+        in->scale_factor_x = 200000;
+    in->scale_factor_x *= 2;
+    cout << "Zoom -| scale_factor_x:" << in->scale_factor_y<<" scale_factor_x:" << in->scale_factor_x << endl;
     in->redraw();
 
 }
 
-void PlotxyFLTK::autoScale(Fl_Widget *widget, void *userdata) {
+void PlotxyFLTK::scale(Fl_Widget *widget, void *userdata) {
     cout << "*** AUTOZOOM ***" << endl;
     PlotxyFLTK *in = (PlotxyFLTK*)userdata;
 
-    in->scale_factor = abs(in->vievedMaxValue) + abs(in->vievedMinValue);
-    cout << "AutoZoom :" << in->scale_factor << endl;
+    in->scale_factor_y = abs(in->vievedMaxValue) + abs(in->vievedMinValue);
+    cout << "AutoZoom :" << in->scale_factor_y << endl;
     in->redraw();
 
 }
+
+void PlotxyFLTK::autoScale(Fl_Widget* widget, void* userdata) {
+    cout << "*** AUTOSCALE ***" << endl;
+    PlotxyFLTK *in = (PlotxyFLTK*)userdata;
+    in->enableAutoScaleWhileGraph=!in->enableAutoScaleWhileGraph;
+    cout << "enableAutoScaleWhileGraph value:" << in->enableAutoScaleWhileGraph << endl;
+}
+
 
 // static void Copy_CB(Fl_Widget*, void *userdata) {
 //     printf("*** COPY ***\n");
@@ -104,14 +123,17 @@ int PlotxyFLTK::handle(int e) {
         break;
 
     case FL_PUSH:
+        
+        //FIXME Autoscale non mi imposto on/off il checkbox...perche'?
         if (Fl::event_button() == FL_RIGHT_MOUSE) {
             Fl_Menu_Item rclick_menu[] = {
                 { "Zoom +", 0, zoomDec, (void*)this },
-                { "AutoScale", 0, autoScale, (void*)this },
-                { "Zoom -", 0, zoomInc, (void*)this },
+                { "Zoom -", 0, zoomInc, (void*)this,FL_MENU_DIVIDER},
+                { "Scale", 0, scale, (void*)this },
+                { "AutoScale", 0, autoScale, (void*)this, FL_MENU_TOGGLE|FL_MENU_VALUE },
                 { 0 }
             };
-            const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, 0);
+            const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(),0, 0, 0);
             if (m)
                 m->do_callback(0, m->user_data());
             return(1);          // (tells caller we handled this event)
@@ -198,7 +220,7 @@ void PlotxyFLTK::draw() {
 
     fl_push_matrix();
     fl_translate(translate_x, translate_y);
-    fl_scale(wd / this->scale_factor, ht / this->scale_factor);
+    fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
 
     fl_begin_line();
 
@@ -223,21 +245,6 @@ void PlotxyFLTK::draw() {
     draw_coords();
 } /* end of draw() method */
 
-// void PlotFLTK::update_scope(void *)
-// {
-//         for (int i = 0; i < 7; i++) {
-//                 view[view_pos] = trace[trace_pos];
-//                 trace_pos++;
-//                 if(trace_pos >= trace_max) trace_pos = 0;
-//                 view_pos++;
-//                 if(view_pos >= view_width) view_pos = 0;
-//         }
-//         view_break = view_pos;
-//         Fl::repeat_timeout(0.05, update_scope);
-//         this->redraw();
-// }
-
-
 
 void PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
     if (view == NULL) {
@@ -246,18 +253,23 @@ void PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
     for (int i = 0; i < nvalue; i++) {
 
         view[i] = - value[i]; //minus sign is necessary to plot a correct graph
-                this->vievedMaxValue = getMaxValue(view[i], this->vievedMaxValue);
+        this->vievedMaxValue = getMaxValue(view[i], this->vievedMaxValue);
         this->vievedMinValue = getMinValue(view[i], this->vievedMinValue);
     }
-    this->scale_factor = fabs(this->vievedMaxValue) + fabs(this->vievedMinValue);
+    this->scale_factor_y = fabs(this->vievedMaxValue) + fabs(this->vievedMinValue);
 
     cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
     cout << "Min Value:" << fabs(this->vievedMinValue) << endl;
-    cout << "Scale factor:" << this->scale_factor << endl;
+    cout << "Scale factor y:" << this->scale_factor_y << endl;
 }
 
 void PlotxyFLTK::insertValueToPlot(float value) {
     insertInTail(value);
+    if (this->enableAutoScaleWhileGraph) {
+        this->vievedMaxValue = getMaxValue(value, this->vievedMaxValue);
+        this->vievedMinValue = getMinValue(value, this->vievedMinValue);
+        this->scale_factor_y = fabs(this->vievedMaxValue) + fabs(this->vievedMinValue);
+    }
     this->redraw();
 }
 
@@ -292,5 +304,5 @@ float PlotxyFLTK::getMinValue(float val, float min) {
 
 
 
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
 
