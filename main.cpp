@@ -1,18 +1,19 @@
 #include <iostream>
 #include <math.h>
 #include"plotxyfltk.h"
-#define N 8192
+#define N 2048
 #define PLOTTEDN 512
 
 using namespace std;
 static PlotxyFLTK *scope = 0;
+// static PlotxyFLTK *scope1 =0;
 int k;
 
 void update_scope(void *valori) {
     float *val =(float*)valori;
     scope->insertValueToPlot(val[k]);
     k++;
-    Fl::repeat_timeout(0.01, update_scope,valori);
+    Fl::repeat_timeout(0.05, update_scope,valori);
 }
 
 int main(int argc, char **argv) {
@@ -28,18 +29,21 @@ int main(int argc, char **argv) {
 
     main_win->begin();
     scope = new PlotxyFLTK(0, 0, 800, 600);
+//     scope1 = new PlotxyFLTK(405, 0, 400, 300);
     main_win->end();
-
     main_win->show(argc, argv);
 
-    for (int i = 0; i < N; i++) {
+    for (i = 0; i < N; i++) {
         valori[i] =5* sin((double)(i * 5 * 2 * M_PI / (double)N));
     }
-    k=i;
+    k=PLOTTEDN;
+    cout<<k<<endl;
 //     for (i = 0,j=0.0;i < 2*N;j+=0.1,i++) {
 //         valori[i] = j;
 //     }
     scope->insertValuesToPlot(valori, PLOTTEDN);
+//     scope1->insertValuesToPlot(valori, PLOTTEDN);
+//     scope1->setXAxis("prova");
     cout<<"ok"<<endl;
     Fl::add_timeout(0.5, update_scope, valori);
 

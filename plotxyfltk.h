@@ -1,12 +1,15 @@
 #ifndef PLOTFLTK_H
 #define PLOTFLTK_H
 
+#include <iostream>
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Item.H>
 
+
+using namespace std;
 /*
  * Classe inerente alla parte grafica
  */
@@ -22,21 +25,22 @@ class PlotxyFLTK: public Fl_Box {
         float *trace;//all value
         float *view;//showed values
         int initial_x, initial_y;
-
         
         void insertInTail(float element);
         void shift_vector_left(float element);
         
         void draw();
+        
+        /***FLMENUITEM FUNCTION***/
         //Zoom static function
         static void zoomInc(Fl_Widget *widget, void *userdata);
         static void zoomDec(Fl_Widget *widget, void *userdata);
         //Autoscale Function
         static void scale(Fl_Widget *widget, void *userdata);
-        //Autoscale graph during plot
+        //Allow enable/disable Autoscale graph during plot
         static void autoScaleBehaviour(Fl_Widget *widget, void *userdata);
+        /******/
         
-        static void autoScale(Fl_Widget *widget, void *userdata);
         bool enableAutoScaleWhileGraph;
         
         //Many scale,translate parameters
@@ -50,6 +54,12 @@ class PlotxyFLTK: public Fl_Box {
         
         float getMaxValue(float,float );
         float getMinValue(float,float );
+        
+        string xAxis,yAxis;
+        
+        float secondTag;//Use to move second tag (line to sign seconds)
+        
+        Fl_Menu_Item *rclick_menu;
 
     protected:
         int handle(int e);
@@ -60,9 +70,11 @@ class PlotxyFLTK: public Fl_Box {
         PlotxyFLTK(int xp, int yp, int wp, int hp, const char *lp = 0);
         ~PlotxyFLTK();
         //void update_scope(void *);
-        void insertValuesToPlot(float *value, int nvalue);
+        int insertValuesToPlot(float *value, int nvalue);
         void insertValueToPlot(float value);
-        void plotLine(float value);
+        void setXAxis(char *name);
+        void setYAxis(char *name);
+        void plotLine();
         
 
 };

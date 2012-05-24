@@ -1,25 +1,25 @@
-#include <FL/Fl.H>
+    #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Printer.H>
 
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include "plotxyfltk.h"
 
 using namespace std;
 
 PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(xp, yp, wp, hp, lp) {
-    trace_max = 1024;//max number of values
+    trace_max = 16384;//max number of values
     view_width = 512;//numbers showed
 
     trace_pos = 0;
     view_pos = 0;
     view_break = 0;
 
-    trace = new float[trace_max];
+//     trace = new float[trace_max];
     view = 0;
 
     initial_x = 0;
@@ -32,6 +32,18 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
     this->enableAutoScaleWhileGraph = false;
     this->vievedMaxValue = 0;
     this->vievedMinValue = 0;
+    this->xAxis.append("t");
+    this->yAxis.append("Attention");
+    this->secondTag = 0;
+
+    //Popup menu option list
+    rclick_menu = new Fl_Menu_Item[4];
+    rclick_menu->insert(0,"Zoom+", 0, zoomDec, (void*)this);
+    rclick_menu->insert(1,"Zoom-", 0, zoomInc, (void*)this, FL_MENU_DIVIDER);
+    rclick_menu->insert(2,"Scale", 0, scale, (void*)this);
+    rclick_menu->insert(3,"AutoScale", 0, autoScaleBehaviour, (void*)this, FL_MENU_TOGGLE);
+//        rclick_menu->add( 0 }
+
 }
 
 
@@ -45,15 +57,19 @@ void PlotxyFLTK::zoomInc(Fl_Widget *widget, void *userdata) {
     PlotxyFLTK *in = (PlotxyFLTK*)userdata;
 
     in->scale_factor_y /= 2;
-    if (in->scale_factor_y <= 0)
+    if (in->scale_factor_y <= 0) {
         in->scale_factor_y = 1;
-    
+    }
     in->scale_factor_x /= 2;
-    if (in->scale_factor_x <= 0)
+
+    if (in->scale_factor_x <= 0) {
         in->scale_factor_x = 1;
-    
-    cout << "Zoom +| scale_factor_x:" << in->scale_factor_y<<" scale_factor_x:" << in->scale_factor_x << endl;
-    
+        in->view_width = 512;
+    }
+
+    in->view_width /= 2;
+    cout << "Zoom+ | scale_factor_x:" << in->scale_factor_y << " scale_factor_x:" << in->scale_factor_x << " view_width:" << in->view_width << endl;
+
     in->redraw();
 
 }
@@ -61,14 +77,19 @@ void PlotxyFLTK::zoomInc(Fl_Widget *widget, void *userdata) {
 void PlotxyFLTK::zoomDec(Fl_Widget *widget, void *userdata) {
     cout << "*** ZOOM - ***" << endl;
     PlotxyFLTK *in = (PlotxyFLTK*)userdata;
-    if (in->scale_factor_y >= 200000)
+
+    if (in->scale_factor_y >= 200000) {
         in->scale_factor_y = 200000;
+    }
     in->scale_factor_y *= 2;
-    
-     if (in->scale_factor_x >= 200000)
+
+    if (in->scale_factor_x >= 200000) {
         in->scale_factor_x = 200000;
+    }
     in->scale_factor_x *= 2;
-    cout << "Zoom -| scale_factor_x:" << in->scale_factor_y<<" scale_factor_x:" << in->scale_factor_x << endl;
+
+    in->view_width *= 2;
+    cout << "Zoom- | scale_factor_x:" << in->scale_factor_y << " scale_factor_x:" << in->scale_factor_x << " view_width:" << in->view_width << endl;
     in->redraw();
 
 }
@@ -83,11 +104,18 @@ void PlotxyFLTK::scale(Fl_Widget *widget, void *userdata) {
 
 }
 
-void PlotxyFLTK::autoScale(Fl_Widget* widget, void* userdata) {
+void PlotxyFLTK::autoScaleBehaviour(Fl_Widget* widget, void* userdata) {
     cout << "*** AUTOSCALE ***" << endl;
     PlotxyFLTK *in = (PlotxyFLTK*)userdata;
-    in->enableAutoScaleWhileGraph=!in->enableAutoScaleWhileGraph;
+    in->enableAutoScaleWhileGraph = !in->enableAutoScaleWhileGraph;
     cout << "enableAutoScaleWhileGraph value:" << in->enableAutoScaleWhileGraph << endl;
+
+    if (in->rclick_menu[3].value() == 4)
+        in->rclick_menu[3].clear();
+    else
+        in->rclick_menu[3].set();
+
+
 }
 
 
@@ -104,6 +132,7 @@ void PlotxyFLTK::autoScale(Fl_Widget* widget, void* userdata) {
 // }
 
 
+//Function to
 int PlotxyFLTK::handle(int e) {
     int ret = Fl_Box::handle(e);
     Fl_Region regione;
@@ -123,23 +152,14 @@ int PlotxyFLTK::handle(int e) {
         break;
 
     case FL_PUSH:
-        
-        //FIXME Autoscale non mi imposto on/off il checkbox...perche'?
         if (Fl::event_button() == FL_RIGHT_MOUSE) {
-            Fl_Menu_Item rclick_menu[] = {
-                { "Zoom +", 0, zoomDec, (void*)this },
-                { "Zoom -", 0, zoomInc, (void*)this,FL_MENU_DIVIDER},
-                { "Scale", 0, scale, (void*)this },
-                { "AutoScale", 0, autoScale, (void*)this, FL_MENU_TOGGLE|FL_MENU_VALUE },
-                { 0 }
-            };
-            const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(),0, 0, 0);
+            const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, 0);
             if (m)
                 m->do_callback(0, m->user_data());
             return(1);          // (tells caller we handled this event)
         }
-        return(1);
 
+        return(1);//it allow to use FL_DRAG (see documentation)
         break;
     case FL_RELEASE:
         // RIGHT MOUSE RELEASED? Mask it from Fl_Input
@@ -162,7 +182,7 @@ int PlotxyFLTK::handle(int e) {
 
 
     case FL_MOVE:               // FL_MOVE: mouse movement causes 'user damage' and redraw..
-        damage(FL_DAMAGE_USER1);
+        //damage(FL_DAMAGE_USER1);
         ret = 1;
         break;
 
@@ -197,7 +217,7 @@ void PlotxyFLTK::draw_coords() {
     // White text
     fl_color(FL_WHITE);
     fl_font(FL_HELVETICA, 10);
-    fl_draw(s, 15, 15);
+    fl_draw(s, 730, 15);
 }
 
 
@@ -212,10 +232,31 @@ void PlotxyFLTK::draw() {
     fl_rectf(xo, yo, wd, ht);
     fl_color(FL_WHITE);
 
-    //Plot axis
-    fl_line_style(FL_JOIN_BEVEL, 3);
+    /*******Plot axes*******/
+    fl_line_style(FL_JOIN_BEVEL, 1);
+    fl_font(FL_HELVETICA, 10);
+    //X asis
     fl_line(0, ht / 2, wd, ht / 2);
-    fl_line(3, 0, 3, ht);
+    fl_line(wd - 5, (ht / 2) - 5, wd, ht / 2);
+    fl_line(wd - 5, (ht / 2) + 5, wd, ht / 2);
+    fl_draw(this->xAxis.c_str(), wd - 10, ht / 2 + 15);
+    //Y axis
+    fl_line(0, 0, 0, ht);
+    fl_line(0, 0, 5, 5);
+    fl_draw(this->yAxis.c_str(), 5, 15);
+
+    fl_line_style(FL_JOIN_BEVEL, 2);
+    /***********************/
+
+    //FIXME Risolvere second tag problem
+    //Second tag
+    secondTag++;
+    if (this->secondTag >= view_width) {
+        this->secondTag = 0;
+
+    }
+    fl_line((wd - secondTag), (ht / 2) - 5 , (wd - secondTag), (ht / 2) + 5);
+
     fl_line_style(FL_JOIN_BEVEL, 1);
 
     fl_push_matrix();
@@ -231,12 +272,7 @@ void PlotxyFLTK::draw() {
         }
 
         fl_vertex(((float)i / (float)view_width), view[i]);
-        fl_color(FL_RED);
-
         fl_color(FL_GREEN);
-
-//         if((i-20)>0)
-//             fl_vertex(((float)i / (float)view_width), view[i-20]);
     }
     fl_end_line();
 
@@ -246,9 +282,12 @@ void PlotxyFLTK::draw() {
 } /* end of draw() method */
 
 
-void PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
+int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
+    if(nvalue>trace_max)
+        return -1;
+    
     if (view == NULL) {
-        view = new float[nvalue];
+        view = new float[trace_max];
     }
     for (int i = 0; i < nvalue; i++) {
 
@@ -256,19 +295,20 @@ void PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
         this->vievedMaxValue = getMaxValue(view[i], this->vievedMaxValue);
         this->vievedMinValue = getMinValue(view[i], this->vievedMinValue);
     }
-    this->scale_factor_y = fabs(this->vievedMaxValue) + fabs(this->vievedMinValue);
+    this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
 
     cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
     cout << "Min Value:" << fabs(this->vievedMinValue) << endl;
     cout << "Scale factor y:" << this->scale_factor_y << endl;
+    return 0;
 }
 
 void PlotxyFLTK::insertValueToPlot(float value) {
-    insertInTail(value);
+        insertInTail(-value);//minus sign is necessary to plot a correct graph
     if (this->enableAutoScaleWhileGraph) {
         this->vievedMaxValue = getMaxValue(value, this->vievedMaxValue);
         this->vievedMinValue = getMinValue(value, this->vievedMinValue);
-        this->scale_factor_y = fabs(this->vievedMaxValue) + fabs(this->vievedMinValue);
+        this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
     }
     this->redraw();
 }
@@ -301,8 +341,17 @@ float PlotxyFLTK::getMinValue(float val, float min) {
         return min;
 }
 
+void PlotxyFLTK::setXAxis(char* name) {
+    this->xAxis.append(name);
+}
+
+void PlotxyFLTK::setYAxis(char* name) {
+    this->yAxis.append(name);
+}
 
 
 
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+
+
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
 
