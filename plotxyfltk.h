@@ -16,14 +16,16 @@ using namespace std;
 class PlotxyFLTK: public Fl_Box {
     private:
         int trace_max;//max number of values
+        int trace_min;//min number of values
         int view_width;//numbers showed
 
-        int trace_pos;
-        int view_pos;
+//         int trace_pos;
+//         int view_pos;
         int view_break;
 
         float *trace;//all value
         float *view;//showed values
+        int presentValue;//contains the values number acquired 
         int initial_x, initial_y;
         
         void insertInTail(float element);
@@ -44,14 +46,16 @@ class PlotxyFLTK: public Fl_Box {
         bool enableAutoScaleWhileGraph;
         
         //Many scale,translate parameters
-        float scale_factor_x;
-        float scale_factor_y;
+        int scale_factor_x;
+        int scale_factor_y;
         int translate_value;
         int translate_x,translate_y;
         
+        //Min max value along y axis
         float vievedMaxValue;
         float vievedMinValue;
         
+        //Get  Min max value along y axis
         float getMaxValue(float,float );
         float getMinValue(float,float );
         
