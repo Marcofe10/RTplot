@@ -22,10 +22,11 @@ class PlotxyFLTK: public Fl_Box {
 //         int trace_pos;
 //         int view_pos;
         int view_break;
+//         int offesetDraw;
 
         float *trace;//all value
         float *view;//showed values
-        int presentValue;//contains the values number acquired 
+        int insertsValues;//contains the values number acquired 
         int initial_x, initial_y;
         
         void insertInTail(float element);
