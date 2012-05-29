@@ -29,17 +29,26 @@ class PlotxyFLTK: public Fl_Box {
         int insertsValues;//contains the values number acquired 
         int initial_x, initial_y;
         
+        //Insert element in tail
         void insertInTail(float element);
+        
+        //Shift vector on left
         void shift_vector_left(float element);
         
+        //Translate Graph along y;
+        void translateGraphY();
+        
+        //Function used by FLTK
         void draw();
         
-        /***FLMENUITEM FUNCTION***/
+        /***FL_MENU_ITEM FUNCTION***/
         //Zoom static function
         static void zoomInc(Fl_Widget *widget, void *userdata);
         static void zoomDec(Fl_Widget *widget, void *userdata);
+        
         //Autoscale Function
         static void scale(Fl_Widget *widget, void *userdata);
+        
         //Allow enable/disable Autoscale graph during plot
         static void autoScaleBehaviour(Fl_Widget *widget, void *userdata);
         /******/

@@ -228,9 +228,13 @@ void PlotxyFLTK::draw_coords() {
     char s[80];
     char pres[80];
     char tag[80];
+    char max[10];
+    char min[10];
     sprintf(s, "x:%d y:%d", (int)Fl::event_x(), (int)Fl::event_y());
     sprintf(pres, "Pres:%d", this->insertsValues);
     sprintf(tag, "Pres:%.4f", this->secondTag);
+    sprintf(max, "Max:%.4f", this->vievedMaxValue);
+    sprintf(min, "Min:%.4f", this->vievedMinValue);
     // Black rect
 //     fl_color(FL_BLACK);
 //     fl_rectf(10, 10, 200, 25);
@@ -240,6 +244,8 @@ void PlotxyFLTK::draw_coords() {
     fl_draw(s, 730, 15);
     fl_draw(pres, 730, 26);
     fl_draw(tag, 730, 37);
+    fl_draw(max, 730, 48);
+    fl_draw(min, 730, 59);
 }
 
 
@@ -259,11 +265,19 @@ void PlotxyFLTK::draw() {
     /*******Plot axes*******/
     fl_line_style(FL_JOIN_BEVEL, 1);
     fl_font(FL_HELVETICA, 10);
+
     //X asis
-    fl_line(0, ht / 2, wd, ht / 2);
-    fl_line(wd - 5, (ht / 2) - 5, wd, ht / 2);
-    fl_line(wd - 5, (ht / 2) + 5, wd, ht / 2);
-    fl_draw(this->xAxis.c_str(), wd - 10, ht / 2 + 15);
+//     fl_line(0, ht / 2, wd, ht / 2);
+//     fl_line(wd - 5, (ht / 2) - 5, wd, ht / 2);
+//     fl_line(wd - 5, (ht / 2) + 5, wd, ht / 2);
+//     fl_draw(this->xAxis.c_str(), wd - 10, ht / 2 + 15);
+
+
+    fl_line(0, this->translate_y, wd, this->translate_y);
+    fl_line(wd - 5, (this->translate_y) - 5, wd, this->translate_y);
+    fl_line(wd - 5, (this->translate_y) + 5, wd, this->translate_y);
+    fl_draw(this->xAxis.c_str(), wd - 10, this->translate_y + 15);
+
     //Y axis
     fl_line(0, 0, 0, ht);
     fl_line(0, 0, 5, 5);
@@ -279,23 +293,23 @@ void PlotxyFLTK::draw() {
     //FIXME Risolvere problema per ottenere i tag per piu' secondi in una sola schermata
     /***Second tag***/
 
-    for (j = 1;j <= (view_width / 512);j++) {
-
-        if (this->insertsValues >= view_width) {
-            secondTag += (float) wd / view_width ;
-            if (this->secondTag >= wd) {
-                this->secondTag = 0.0;
-            }
-
-        } /*else {
-
-
-        }*/
-        sprintf(text, "%d", j);
-        fl_line_style(FL_JOIN_BEVEL, 2);
-        fl_line((wd - secondTag) , (ht / 2) - 5 , (wd  - secondTag), (ht / 2) + 5);
-        fl_draw(text, (wd - secondTag), (ht / 2) + 13);
-    }
+//     for (j = 1;j <= (view_width / 512);j++) {
+//
+//         if (this->insertsValues >= view_width) {
+//             secondTag += (float) wd / view_width ;
+//             if (this->secondTag >= wd) {
+//                 this->secondTag = 0.0;
+//             }
+//
+//         } /*else {
+//
+//
+//         }*/
+//         sprintf(text, "%d", j);
+//         fl_line_style(FL_JOIN_BEVEL, 2);
+//         fl_line((wd - secondTag) , (ht / 2) - 5 , (wd  - secondTag), (ht / 2) + 5);
+//         fl_draw(text, (wd - secondTag), (ht / 2) + 13);
+//     }
     /******/
 
     fl_line_style(FL_JOIN_BEVEL, 1);
@@ -336,12 +350,14 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
         view[i] = - value[i]; //minus sign is necessary to plot a correct graph
         this->vievedMaxValue = getMaxValue(view[i], this->vievedMaxValue);
         this->vievedMinValue = getMinValue(view[i], this->vievedMinValue);
+
     }
     this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
+    this->translateGraphY();
 
-    cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
-    cout << "Min Value:" << fabs(this->vievedMinValue) << endl;
-    cout << "Scale factor y:" << this->scale_factor_y << endl;
+//     cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
+//     cout << "Min Value:" << fabs(this->vievedMinValue) << endl;
+//     cout << "Scale factor y:" << this->scale_factor_y << endl;
     return 0;
 }
 
@@ -364,6 +380,11 @@ void PlotxyFLTK::insertValueToPlot(float value) {
         this->vievedMaxValue = getMaxValue(value, this->vievedMaxValue);
         this->vievedMinValue = getMinValue(value, this->vievedMinValue);
         this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
+
+        this->translateGraphY();
+//         cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
+//         cout << "Min Value:" << fabs(this->vievedMinValue) << endl;
+//         cout << "Scale factor y:" << this->scale_factor_y << endl;
     }
     this->redraw();
 }
@@ -403,7 +424,15 @@ void PlotxyFLTK::setXAxis(char* name) {
 void PlotxyFLTK::setYAxis(char* name) {
     this->yAxis.append(name);
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
 
+void PlotxyFLTK::translateGraphY() {
+    if ((this->vievedMinValue == 0) && (this->vievedMaxValue != 0))
+        this->translate_y = (y() + (h()));
+    else if ((this->vievedMinValue != 0) && (this->vievedMaxValue == 0))
+        this->translate_y = (y() + (h()));
+    else
+        this->translate_y = (y() + (h() / 2));
+}
 
 
