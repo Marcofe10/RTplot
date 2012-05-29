@@ -11,7 +11,12 @@
 
 using namespace std;
 
-PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(xp, yp, wp, hp, lp) {
+PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(xp, yp, wp, hp, lp){
+     this->X=xp;
+     this->Y=yp;
+     this->W=wp;
+     this->H=hp;
+    
     this->trace_max = 16384;//max number of values
     this->trace_min = 512;//max number of values
     this->view_width = this->trace_min;//numbers showed
@@ -38,13 +43,13 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
     this->yAxis.append("Attention");
     this->secondTag = 0.0;
 
-    //FIXME don't show Zoom+ and Zoom-
-    //Popup menu option list
-    rclick_menu = new Fl_Menu_Item[4];
-    rclick_menu->insert(0, "Zoom+", 0, zoomDec, (void*)this);
-    rclick_menu->insert(1, "Zoom-", 0, zoomInc, (void*)this, FL_MENU_DIVIDER);
-    rclick_menu->insert(2, "Scale", 0, scale, (void*)this);
-    rclick_menu->insert(3, "AutoScale", 0, autoScaleBehaviour, (void*)this, FL_MENU_TOGGLE | FL_MENU_VALUE);
+//     //FIXME don't show Zoom+ and Zoom-
+//     //Popup menu option list
+//     rclick_menu = new Fl_Menu_Item[4];
+//     rclick_menu->insert(0, "Zoom+", 0, zoomDec, (void*)this);
+//     rclick_menu->insert(1, "Zoom-", 0, zoomInc, (void*)this, FL_MENU_DIVIDER);
+//     rclick_menu->insert(2, "Scale", 0, scale, (void*)this);
+//     rclick_menu->insert(3, "AutoScale", 0, autoScaleBehaviour, (void*)this, FL_MENU_TOGGLE | FL_MENU_VALUE);
 //        rclick_menu->add( 0 }
 
 }
@@ -241,11 +246,11 @@ void PlotxyFLTK::draw_coords() {
     // White text
     fl_color(FL_WHITE);
     fl_font(FL_HELVETICA, 10);
-    fl_draw(s, 730, 15);
-    fl_draw(pres, 730, 26);
-    fl_draw(tag, 730, 37);
-    fl_draw(max, 730, 48);
-    fl_draw(min, 730, 59);
+    fl_draw(s, this->W-70, 15);
+    fl_draw(pres, this->W-70, 26);
+    fl_draw(tag, this->W-70, 37);
+    fl_draw(max, this->W-70, 48);
+    fl_draw(min, this->W-70, 59);
 }
 
 
@@ -424,7 +429,6 @@ void PlotxyFLTK::setXAxis(char* name) {
 void PlotxyFLTK::setYAxis(char* name) {
     this->yAxis.append(name);
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
 
 void PlotxyFLTK::translateGraphY() {
     if ((this->vievedMinValue == 0) && (this->vievedMaxValue != 0))
@@ -434,5 +438,14 @@ void PlotxyFLTK::translateGraphY() {
     else
         this->translate_y = (y() + (h() / 2));
 }
+
+void PlotxyFLTK::plotLine()
+{
+    return ;
+
+}
+
+
+
 
 

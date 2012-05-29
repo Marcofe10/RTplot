@@ -15,6 +15,7 @@ using namespace std;
  */
 class PlotxyFLTK: public Fl_Box {
     private:
+        int X,Y,W,H;
         int trace_max;//max number of values
         int trace_min;//min number of values
         int view_width;//numbers showed
@@ -51,7 +52,10 @@ class PlotxyFLTK: public Fl_Box {
         
         //Allow enable/disable Autoscale graph during plot
         static void autoScaleBehaviour(Fl_Widget *widget, void *userdata);
+
         /******/
+        
+        float timeOut;//plot Timeout. it used from updateScope funtion
         
         bool enableAutoScaleWhileGraph;
         
@@ -74,6 +78,7 @@ class PlotxyFLTK: public Fl_Box {
         float secondTag;//Use to move second tag (line to sign seconds)
         
         Fl_Menu_Item *rclick_menu;
+        
 
     protected:
         int handle(int e);
@@ -83,11 +88,12 @@ class PlotxyFLTK: public Fl_Box {
     public:
         PlotxyFLTK(int xp, int yp, int wp, int hp, const char *lp = 0);
         ~PlotxyFLTK();
-        //void update_scope(void *);
         int insertValuesToPlot(float *value, int nvalue);
         void insertValueToPlot(float value);
         void setXAxis(char *name);
         void setYAxis(char *name);
+        
+        //plot line into graph
         void plotLine();
         
 

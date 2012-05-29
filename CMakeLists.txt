@@ -5,13 +5,15 @@ find_package(FLTK REQUIRED)
 # include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${FLTK_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(demoxyfltk demomain.cpp plotxyfltk.cpp)
+add_executable(demoplotxyfltk demomain.cpp plotxyfltk.cpp)
+add_executable(demowinplotxyfltk demowinplotxyfltk.cpp winplotxyfltk.cpp plotxyfltk.cpp)
 
 #Share and Static Library
 # add_library(plotxyfltk SHARED plotxyfltk.cpp)
 # add_library(plotxyfltks STATIC plotxyfltk.cpp)
 
-target_link_libraries(demoxyfltk ${FLTK_LIBRARIES})
+target_link_libraries(demoplotxyfltk ${FLTK_LIBRARIES})
+target_link_libraries(demowinplotxyfltk ${FLTK_LIBRARIES})
 
 
 SET(HDRS plotxyfltk.h )
