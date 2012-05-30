@@ -111,6 +111,8 @@ class PlotxyFLTK: public Fl_Box {
         ~PlotxyFLTK();
         int insertValuesToPlot(float *value, int nvalue);
         void insertValueToPlot(float value);
+        
+        void setAutoScale(bool value);
         void setXAxis(char *name);
         void setYAxis(char *name);
 

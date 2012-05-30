@@ -27,6 +27,7 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Wind
     int hw = H;
     this->plot = new PlotxyFLTK(xw, yw, ww, hw);
     //this->plot->show();
+    this->box(FL_PLASTIC_UP_BOX);
 
 //     this->labelZoomX = new Fl_Label(ww+2,10,48,20,"Zoom X");
     this->buttonZoomXDec = new Fl_Button(ww + 50, 10, 20, 20, "-");
@@ -51,6 +52,8 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Wind
     this->buttonZoomXInc->box(FL_PLASTIC_UP_BOX);
     this->buttonZoomYInc->box(FL_PLASTIC_UP_BOX);
     this->radioAutoScale->box(FL_PLASTIC_UP_BOX);
+    
+    this->plot->
 }
 
 // void WinPlotXYFLTK::draw()
@@ -104,7 +107,14 @@ void WinPlotXYFLTK::zoomYInc(Fl_Widget* widget, void* userdata) {
 void WinPlotXYFLTK::zoomAuto(Fl_Widget* widget, void* userdata)
 {
     WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
-    in->zoomAuto();
+    cout<<"Value:"<<in->radioAutoScale->value()<<endl;
+    
+    if (in->radioAutoScale->value() == 4)
+        in->radioAutoScale->clear();
+    else
+        in->radioAutoScale->set();
+    
+    in->plot->zoomAuto();
 }
 
 // kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on; 

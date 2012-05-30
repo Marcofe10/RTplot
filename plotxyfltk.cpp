@@ -446,6 +446,11 @@ float PlotxyFLTK::getMinValue(float val, float min) {
     else
         return min;
 }
+void PlotxyFLTK::setAutoScale(bool value)
+{
+    this->enableAutoScaleWhileGraph=value;
+}
+
 
 void PlotxyFLTK::setXAxis(char* name) {
     this->xAxis.append(name);
