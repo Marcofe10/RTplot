@@ -30,7 +30,7 @@ class WinPlotXYFLTK: public Fl_Window {
         
         PlotxyFLTK *plot;
         Fl_Button *zoomXPlus, *zoomXMinus, *zoomYPlus, *zoomYMinus;
-        void draw();
+//         void draw();
     public:
         WinPlotXYFLTK(int X, int Y, int W, int H, const char* l);
         int insertValuesToPlot(float *value, int nvalue);

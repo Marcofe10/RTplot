@@ -1,3 +1,23 @@
+/*
+    <one line to give the program's name and a brief idea of what it does.>
+    Copyright (C) 2012  <copyright holder> <email>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
@@ -11,12 +31,12 @@
 
 using namespace std;
 
-PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(xp, yp, wp, hp, lp){
-     this->X=xp;
-     this->Y=yp;
-     this->W=wp;
-     this->H=hp;
-    
+PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(xp, yp, wp, hp, lp) {
+    this->X = xp;
+    this->Y = yp;
+    this->W = wp;
+    this->H = hp;
+
     this->trace_max = 16384;//max number of values
     this->trace_min = 512;//max number of values
     this->view_width = this->trace_min;//numbers showed
@@ -246,11 +266,11 @@ void PlotxyFLTK::draw_coords() {
     // White text
     fl_color(FL_WHITE);
     fl_font(FL_HELVETICA, 10);
-    fl_draw(s, this->W-70, 15);
-    fl_draw(pres, this->W-70, 26);
-    fl_draw(tag, this->W-70, 37);
-    fl_draw(max, this->W-70, 48);
-    fl_draw(min, this->W-70, 59);
+    fl_draw(s, this->W - 70, 15);
+    fl_draw(pres, this->W - 70, 26);
+    fl_draw(tag, this->W - 70, 37);
+    fl_draw(max, this->W - 70, 48);
+    fl_draw(min, this->W - 70, 59);
 }
 
 
@@ -439,13 +459,6 @@ void PlotxyFLTK::translateGraphY() {
         this->translate_y = (y() + (h() / 2));
 }
 
-void PlotxyFLTK::plotLine()
-{
+void PlotxyFLTK::plotLine() {
     return ;
-
 }
-
-
-
-
-

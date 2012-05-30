@@ -32,21 +32,31 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Wind
     this->zoomXPlus = new Fl_Button(ww + 35, 10, 20, 20, "X+");
     this->zoomYMinus = new Fl_Button(ww + 10, 35, 20, 20, "Y-");
     this->zoomYPlus = new Fl_Button(ww + 35, 35, 20, 20, "Y+");
-    this->show();
 }
 
-void WinPlotXYFLTK::draw()
-{
-    plot->redraw();
-    Fl_Window::draw();
-}
+// void WinPlotXYFLTK::draw()
+// {
+//
+//     Fl_Window::draw();
+// }
 
 
 void WinPlotXYFLTK::insertValueToPlot(float value) {
     this->plot->insertValueToPlot(value);
-    this->redraw();
 }
 
+int WinPlotXYFLTK::insertValuesToPlot(float* value, int nvalue) {
+    this->plot->insertValuesToPlot(value, nvalue);
+}
 
+void WinPlotXYFLTK::plotLine() {
+    this->plot->plotLine();
+}
 
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+void WinPlotXYFLTK::setXAxis(char* name) {
+    this->plot->setXAxis(name);
+}
+
+void WinPlotXYFLTK::setYAxis(char* name) {
+    this->plot->setYAxis(name);
+}
