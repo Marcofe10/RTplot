@@ -80,62 +80,62 @@ PlotxyFLTK::~PlotxyFLTK() {
     delete [] this->view;
 }
 
-void PlotxyFLTK::zoomInc(Fl_Widget *widget, void *userdata) {
-    cout << "*** ZOOM + ***" << endl;
-    PlotxyFLTK *in = (PlotxyFLTK*)userdata;
-
-    in->scale_factor_y /= 2;
-
-    in->view_width /= 2;
-    if (in->scale_factor_y < 1) {
-        in->scale_factor_y = 1;
-    }
-
-    in->scale_factor_x /= 2;
-    if (in->scale_factor_x < 1) {
-        in->scale_factor_x = 1;
-
-    }
-
-    if (in->view_width < in->trace_min) {
-        in->view_width = in->trace_min;
-    }
-
-
-    cout << "Zoom+ | scale_factor_x:" << in->scale_factor_y << " scale_factor_x:" << in->scale_factor_x << " view_width:" << in->view_width << endl;
-
-    in->redraw();
-
-}
-
-
-void PlotxyFLTK::zoomDec(Fl_Widget *widget, void *userdata) {
-    cout << "*** ZOOM - ***" << endl;
-    PlotxyFLTK *in = (PlotxyFLTK*)userdata;
-
-    in->view_width *= 2;
-
-    in->scale_factor_y *= 2;
-    if (in->scale_factor_y >= 200000) {
-        in->scale_factor_y = 32;
-    }
-
-    in->scale_factor_x *= 2;
-    if (in->scale_factor_x >= 32) {
-        in->scale_factor_x = 32;
-        //in->view_width = in->trace_max;
-    }
-
-    if (in->view_width > in->trace_max) {
-        in->view_width = in->trace_max;
-    }
+// void PlotxyFLTK::zoomInc(Fl_Widget *widget, void *userdata) {
+//     cout << "*** ZOOM + ***" << endl;
+//     PlotxyFLTK *in = (PlotxyFLTK*)userdata;
+//
+//     in->scale_factor_y /= 2;
+//
+//     in->view_width /= 2;
+//     if (in->scale_factor_y < 1) {
+//         in->scale_factor_y = 1;
+//     }
+//
+//     in->scale_factor_x /= 2;
+//     if (in->scale_factor_x < 1) {
+//         in->scale_factor_x = 1;
+//
+//     }
+//
+//     if (in->view_width < in->trace_min) {
+//         in->view_width = in->trace_min;
+//     }
+//
+//
+//     cout << "Zoom+ | scale_factor_x:" << in->scale_factor_y << " scale_factor_x:" << in->scale_factor_x << " view_width:" << in->view_width << endl;
+//
+//     in->redraw();
+//
+// }
 
 
-
-    cout << "Zoom- | scale_factor_x:" << in->scale_factor_y << " scale_factor_x:" << in->scale_factor_x << " view_width:" << in->view_width << endl;
-    in->redraw();
-
-}
+// void PlotxyFLTK::zoomDec(Fl_Widget *widget, void *userdata) {
+//     cout << "*** ZOOM - ***" << endl;
+//     PlotxyFLTK *in = (PlotxyFLTK*)userdata;
+//
+//     in->view_width *= 2;
+//
+//     in->scale_factor_y *= 2;
+//     if (in->scale_factor_y >= 200000) {
+//         in->scale_factor_y = 32;
+//     }
+//
+//     in->scale_factor_x *= 2;
+//     if (in->scale_factor_x >= 32) {
+//         in->scale_factor_x = 32;
+//         //in->view_width = in->trace_max;
+//     }
+//
+//     if (in->view_width > in->trace_max) {
+//         in->view_width = in->trace_max;
+//     }
+//
+//
+//
+//     cout << "Zoom- | scale_factor_x:" << in->scale_factor_y << " scale_factor_x:" << in->scale_factor_x << " view_width:" << in->view_width << endl;
+//     in->redraw();
+//
+// }
 
 void PlotxyFLTK::scale(Fl_Widget *widget, void *userdata) {
     cout << "*** AUTOZOOM ***" << endl;
@@ -377,7 +377,11 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
         this->vievedMinValue = getMinValue(view[i], this->vievedMinValue);
 
     }
-    this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
+    /***autoZoom***/
+    if (this->enableAutoScaleWhileGraph) {
+        this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
+    }
+    /******/
     this->translateGraphY();
 
 //     cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
@@ -401,16 +405,17 @@ void PlotxyFLTK::insertValueToPlot(float value) {
         view[insertsValues-1] = -value;
     }
 
+    /***autoZoom***/
     if (this->enableAutoScaleWhileGraph) {
         this->vievedMaxValue = getMaxValue(value, this->vievedMaxValue);
         this->vievedMinValue = getMinValue(value, this->vievedMinValue);
         this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
-
-        this->translateGraphY();
 //         cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
 //         cout << "Min Value:" << fabs(this->vievedMinValue) << endl;
 //         cout << "Scale factor y:" << this->scale_factor_y << endl;
     }
+    /******/
+    this->translateGraphY();
     this->redraw();
 }
 
@@ -461,4 +466,61 @@ void PlotxyFLTK::translateGraphY() {
 
 void PlotxyFLTK::plotLine() {
     return ;
+}
+
+
+
+void PlotxyFLTK::zoomXInc() {
+
+
+    this->scale_factor_x /= 2;
+    if (this->scale_factor_x < 1) {
+        this->scale_factor_x = 1;
+
+    }
+
+    this->view_width /= 2;
+    if (this->view_width < this->trace_min) {
+        this->view_width = this->trace_min;
+    }
+    cout << "Zoom+ | scale_factor_x:" << this->scale_factor_x << " view_width:" << this->view_width << endl;
+    this->redraw();
+}
+
+void PlotxyFLTK::zoomXDec() {
+    this->scale_factor_x *= 2;
+    if (this->scale_factor_x >= 32) {
+        this->scale_factor_x = 32;
+    }
+
+    this->view_width *= 2;
+    if (this->view_width > this->trace_max) {
+        this->view_width = this->trace_max;
+    }
+
+    cout << "Zoom- |  scale_factor_x:" << this->scale_factor_x << " view_width:" << this->view_width << endl;
+    this->redraw();
+}
+
+void PlotxyFLTK::zoomYInc() {
+    this->scale_factor_y /= 2;
+    if (this->scale_factor_y < 1) {
+        this->scale_factor_y = 1;
+    }
+    cout << "Zoom+ | scale_factor_y:" << this->scale_factor_y << endl;
+    this->redraw();
+}
+
+void PlotxyFLTK::zoomYDec() {
+    this->scale_factor_y *= 2;
+    if (this->scale_factor_y >= 200000) {
+        this->scale_factor_y = 32;
+    }
+    cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
+    this->redraw();
+}
+
+void PlotxyFLTK::zoomAuto() {
+    this->enableAutoScaleWhileGraph = !this->enableAutoScaleWhileGraph;
+    cout << "enableAutoScaleWhileGraph value:" << this->enableAutoScaleWhileGraph << endl;
 }

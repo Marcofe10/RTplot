@@ -27,11 +27,30 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Wind
     int hw = H;
     this->plot = new PlotxyFLTK(xw, yw, ww, hw);
     //this->plot->show();
-    this->zoomXMinus = new Fl_Button(ww + 10, 10, 20, 20, "X-");
-    //this->zoomXMinus->callback()
-    this->zoomXPlus = new Fl_Button(ww + 35, 10, 20, 20, "X+");
-    this->zoomYMinus = new Fl_Button(ww + 10, 35, 20, 20, "Y-");
-    this->zoomYPlus = new Fl_Button(ww + 35, 35, 20, 20, "Y+");
+
+//     this->labelZoomX = new Fl_Label(ww+2,10,48,20,"Zoom X");
+    this->buttonZoomXDec = new Fl_Button(ww + 50, 10, 20, 20, "-");
+    this->buttonZoomXInc = new Fl_Button(ww + 75, 10, 20, 20, "+");
+
+//     this->labelZoomY = new Fl_Label(ww+2,35,48,20,"Zoom Y");
+    this->buttonZoomYDec = new Fl_Button(ww + 50, 35, 20, 20, "-");
+    this->buttonZoomYInc = new Fl_Button(ww + 75, 35, 20, 20, "+");
+
+    this->radioAutoScale = new Fl_Radio_Button(ww + 50, 60, 20, 20);
+
+    /***CALLBACKS***/
+    this->buttonZoomXDec->callback((Fl_Callback *) this->zoomXDec, this);
+    this->buttonZoomXInc->callback((Fl_Callback *) this->zoomXInc, this);
+    this->buttonZoomYDec->callback((Fl_Callback *) this->zoomYDec, this);
+    this->buttonZoomYInc->callback((Fl_Callback *) this->zoomYInc, this);
+
+
+    //Property of many buttons
+    this->buttonZoomXDec->box(FL_PLASTIC_UP_BOX);
+    this->buttonZoomYDec->box(FL_PLASTIC_UP_BOX);
+    this->buttonZoomXInc->box(FL_PLASTIC_UP_BOX);
+    this->buttonZoomYInc->box(FL_PLASTIC_UP_BOX);
+    this->radioAutoScale->box(FL_PLASTIC_UP_BOX);
 }
 
 // void WinPlotXYFLTK::draw()
@@ -60,3 +79,32 @@ void WinPlotXYFLTK::setXAxis(char* name) {
 void WinPlotXYFLTK::setYAxis(char* name) {
     this->plot->setYAxis(name);
 }
+
+
+void WinPlotXYFLTK::zoomXDec(Fl_Widget* widget, void* userdata) {
+    WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
+    in->plot->zoomXDec();
+}
+
+void WinPlotXYFLTK::zoomXInc(Fl_Widget* widget, void* userdata) {
+    WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
+    in->plot->zoomXInc();
+}
+
+void WinPlotXYFLTK::zoomYDec(Fl_Widget* widget, void* userdata) {
+    WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
+    in->plot->zoomYDec();
+}
+
+void WinPlotXYFLTK::zoomYInc(Fl_Widget* widget, void* userdata) {
+    WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
+    in->plot->zoomYInc();
+}
+
+void WinPlotXYFLTK::zoomAuto(Fl_Widget* widget, void* userdata)
+{
+    WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
+    in->zoomAuto();
+}
+
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on; 
