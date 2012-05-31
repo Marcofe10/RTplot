@@ -368,11 +368,12 @@ void PlotxyFLTK::draw() {
     fl_end_line();
 //     fl_end_points();
     fl_pop_matrix();
-    //Plot max value and min value
+    
+    /***Plot max value and min value***/
     
     fl_color(FL_WHITE);
     fl_line_style(FL_JOIN_BEVEL, 2);
-    
+    /*Plot max value*/
     fl_push_matrix();
     fl_translate(translate_x, translate_y);
     fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
@@ -382,6 +383,21 @@ void PlotxyFLTK::draw() {
     }
     fl_end_line();
     fl_pop_matrix();
+    /**/
+    
+    /*Plot min value*/
+    fl_push_matrix();
+    fl_translate(translate_x, translate_y);
+    fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
+    fl_begin_line();
+    for (i = 0;i < 7;i++) {
+        fl_vertex(((float)i / (float)view_width), -this->vievedMinValue);
+    }
+    fl_end_line();
+    fl_pop_matrix();
+    /**/
+    
+    /*** ***/
     
 
     drawCoordsAndOthers();
@@ -441,9 +457,6 @@ void PlotxyFLTK::insertValueToPlot(float value) {
     if (this->enableAutoScaleWhileGraph) {
         this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
         this->translateGraphY();
-//         cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
-//         cout << "Min Value:" << fabs(this->vievedMinValue) << endl;
-//         cout << "Scale factor y:" << this->scale_factor_y << endl;
     }
     /******/
 
@@ -463,6 +476,22 @@ void PlotxyFLTK::shift_vector_left(float element) {
     }
     this->view[i-1] = 0.0;
 }
+
+int PlotxyFLTK::getTranslateYValue()
+{
+    return this->translate_y;
+}
+
+int PlotxyFLTK::getZoomXValue()
+{
+    return this->scale_factor_x;
+}
+
+int PlotxyFLTK::getZoomYValue()
+{
+    return this->scale_factor_y;
+}
+
 
 float PlotxyFLTK::getMaxValue(float val, float max) {
     if (val > max)

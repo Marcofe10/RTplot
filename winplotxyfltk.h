@@ -17,7 +17,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-
 #ifndef WINPLOTXYFLTK_H
 #define WINPLOTXYFLTK_H
 
@@ -25,14 +24,15 @@
 #include "FL/Fl_Double_Window.H"
 #include "FL/Fl_Button.H"
 #include "FL/Fl_Check_Button.H"
+#include "FL/Fl_Value_Output.H"
 
 class WinPlotXYFLTK: public Fl_Window {
     private:
 
         PlotxyFLTK *plot;
-        Fl_Button *buttonZoomXInc, *buttonZoomXDec, *buttonZoomYInc, *buttonZoomYDec,*buttonTranslateYUp,*buttonTranslateYDown;
-        Fl_Label *labelZoomX, *labelZoomY;
+        Fl_Button *buttonZoomXInc, *buttonZoomXDec, *buttonZoomYInc, *buttonZoomYDec, *buttonTranslateYUp, *buttonTranslateYDown;
         Fl_Check_Button *checkButtonAutoScale;
+        Fl_Value_Output *valueOutputZoomX, *valueOutputZoomY, *valueOutputTranslateY;
 
         static void zoomXInc(Fl_Widget *widget, void *userdata);
         static void zoomXDec(Fl_Widget *widget, void *userdata);
@@ -42,7 +42,7 @@ class WinPlotXYFLTK: public Fl_Window {
         static void translateX(Fl_Widget *widget, void *userdata);
         static void translateYDown(Fl_Widget *widget, void *userdata);
         static void translateYUp(Fl_Widget *widget, void *userdata);
-        //         void draw();
+        void draw();
 
     public:
         WinPlotXYFLTK(int X, int Y, int W, int H, const char* l);
@@ -58,4 +58,3 @@ class WinPlotXYFLTK: public Fl_Window {
 };
 
 #endif // WINPLOTXYFLTK_H
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;

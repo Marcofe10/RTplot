@@ -34,9 +34,9 @@ int k;
 void update_scope(void *valori) {
     float *val = (float*)valori;
     main_win->insertValueToPlot(val[k]);
-    cout<<val[k]<<endl;
+//     cout<<val[k]<<endl;
     k++;
-    Fl::repeat_timeout(0.5, update_scope, valori);
+    Fl::repeat_timeout(0.01, update_scope, valori);
 }
 
 // void update_scope1(void *valori) {
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
     for (i = 0; i < 10*N; i++) {
 
         if (i > 10)
-            valori[i] = sin((double)(i * 5 * 2 * M_PI / (double)N)) +1;
+            valori[i] = sin((double)(i * 5 * 2 * M_PI / (double)N));
         else
             valori[i] = 0;
     }

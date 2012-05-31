@@ -112,6 +112,10 @@ class PlotxyFLTK: public Fl_Box {
         int insertValuesToPlot(float *value, int nvalue);
         void insertValueToPlot(float value);
 
+        
+        int getZoomXValue();
+        int getZoomYValue();
+        int getTranslateYValue();
         void setAutoZoom(bool value);
         void setXAxis(char *name);
         void setYAxis(char *name);
