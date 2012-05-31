@@ -21,25 +21,27 @@
 #include "winplotxyfltk.h"
 
 WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Window(X, Y, W, H, l) {
-    int xw = X+1;
-    int yw = Y+1;
+    int xw = X + 1;
+    int yw = Y + 1;
     int ww = W - 150;
-    int hw = H-1;
+    int hw = H - 1;
+
+
     this->plot = new PlotxyFLTK(xw, yw, ww, hw);
     //this->plot->show();
     this->box(FL_PLASTIC_UP_BOX);
 
-    this->buttonZoomXInc = new Fl_Button(ww + 2, 10, 110, 20, "ZoomX +");
-    this->buttonZoomXDec = new Fl_Button(ww + 2, 30, 110, 20, "ZoomX -");
-    this->valueOutputZoomX = new Fl_Value_Output(ww + 115, 20, 30, 20);
+    this->buttonZoomXInc = new Fl_Button(ww + 2, 10, BUTTON_SIZE, 20, "ZoomX +");
+    this->buttonZoomXDec = new Fl_Button(ww + 2, 30, BUTTON_SIZE, 20, "ZoomX -");
+    this->valueOutputZoomX = new Fl_Value_Output(ww + BUTTON_SIZE + 5, 20, 45, 20);
 
-    this->buttonZoomYInc = new Fl_Button(ww + 2, 70, 110, 20, "ZoomY +");
-    this->buttonZoomYDec = new Fl_Button(ww + 2, 90, 110, 20, "ZoomY -");
-    this->valueOutputZoomY = new Fl_Value_Output(ww + 115, 80, 30, 20);
+    this->buttonZoomYInc = new Fl_Button(ww + 2, 70, BUTTON_SIZE, 20, "ZoomY +");
+    this->buttonZoomYDec = new Fl_Button(ww + 2, 90, BUTTON_SIZE, 20, "ZoomY -");
+    this->valueOutputZoomY = new Fl_Value_Output(ww + BUTTON_SIZE + 5, 80, 45, 20);
 
-    this->buttonTranslateYUp = new Fl_Button(ww + 2, 130, 110, 20, "Translate+");
-    this->buttonTranslateYDown = new Fl_Button(ww + 2, 150, 110, 20, "Translate-");
-    this->valueOutputTranslateY = new Fl_Value_Output(ww + 115, 140, 30, 20);
+    this->buttonTranslateYUp = new Fl_Button(ww + 2, 130, BUTTON_SIZE, 20, "Translate+");
+    this->buttonTranslateYDown = new Fl_Button(ww + 2, 150, BUTTON_SIZE, 20, "Translate-");
+    this->valueOutputTranslateY = new Fl_Value_Output(ww + BUTTON_SIZE + 5, 140, 45, 20);
 
     this->checkButtonAutoScale = new Fl_Check_Button(ww + 2, 190, 110, 20, "Auto Zoom");
 
@@ -100,6 +102,12 @@ void WinPlotXYFLTK::setYAxis(char* name) {
     this->plot->setYAxis(name);
 }
 
+void WinPlotXYFLTK::setAutoZoom(bool value) {
+    this->checkButtonAutoScale->value(value);
+    this->plot->setAutoZoom(value);
+}
+
+
 
 void WinPlotXYFLTK::zoomXDec(Fl_Widget* widget, void* userdata) {
     WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
@@ -157,4 +165,4 @@ void WinPlotXYFLTK::translateYUp(Fl_Widget* widget, void* userdata) {
     in->plot->translateYUp();
 }
 
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on; 
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;

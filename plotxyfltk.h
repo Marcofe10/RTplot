@@ -96,7 +96,7 @@ class PlotxyFLTK: public Fl_Box {
         string xAxis, yAxis;
 
         float secondTag;//Use to move second tag (line to sign seconds)
-
+        int time;
         Fl_Menu_Item *rclick_menu;
 
 
@@ -119,6 +119,8 @@ class PlotxyFLTK: public Fl_Box {
         void setAutoZoom(bool value);
         void setXAxis(char *name);
         void setYAxis(char *name);
+        void setTraceMin(int value);
+        void setTraceMax(int value);
 
         void zoomXDec();
         void zoomXInc();

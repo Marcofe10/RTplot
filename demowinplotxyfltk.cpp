@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
     for (i = 0; i < 10*N; i++) {
 
         if (i > 10)
-            valori[i] = sin((double)(i * 5 * 2 * M_PI / (double)N));
+            valori[i] =2 * sin((double)(i * 5 * 2 * M_PI / (double)N));
         else
             valori[i] = 0;
     }

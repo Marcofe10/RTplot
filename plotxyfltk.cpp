@@ -39,7 +39,7 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
 
     /***DEFAULT VALUES***/
     this->trace_max = 16384;//max number of values
-    this->trace_min = 512;//max number of values
+    this->trace_min = 512;//mix number of values
     this->view_width = this->trace_min;//numbers showed
 
     //Scale Factor
@@ -72,6 +72,7 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
     this->vievedMinValue = 0;
 
     this->secondTag = 0.0;
+    this->time=0;
 
 
 //     //FIXME don't show Zoom+ and Zoom-
@@ -302,7 +303,7 @@ void PlotxyFLTK::draw() {
     fl_line_style(FL_JOIN_BEVEL, 1);
     fl_font(FL_HELVETICA, 10);
 
-    
+
 //     fl_line(0, ht / 2, wd, ht / 2);
 //     fl_line(wd - 5, (ht / 2) - 5, wd, ht / 2);
 //     fl_line(wd - 5, (ht / 2) + 5, wd, ht / 2);
@@ -326,26 +327,20 @@ void PlotxyFLTK::draw() {
     fl_font(FL_HELVETICA, 10);
 
 
-    //FIXME Risolvere problema per ottenere i tag per piu' secondi in una sola schermata
     /***Second tag***/
-
-//     for (j = 1;j <= (view_width / 512);j++) {
-//
-//         if (this->insertsValues >= view_width) {
-//             secondTag += (float) wd / view_width ;
-//             if (this->secondTag >= wd) {
-//                 this->secondTag = 0.0;
-//             }
-//
-//         } /*else {
-//
-//
-//         }*/
-//         sprintf(text, "%d", j);
-//         fl_line_style(FL_JOIN_BEVEL, 2);
-//         fl_line((wd - secondTag) , (ht / 2) - 5 , (wd  - secondTag), (ht / 2) + 5);
-//         fl_draw(text, (wd - secondTag), (ht / 2) + 13);
-//     }
+    if (this->insertsValues >= view_width) {
+        secondTag += (float) wd / view_width ;
+        if (this->secondTag >= wd / (float)((view_width / this->trace_min))) {
+            this->secondTag = 0.0;
+            time++;
+        }
+    }
+    fl_line_style(FL_JOIN_BEVEL, 2);
+    for (j = 1;j <= (view_width / this->trace_min);j++) {
+        fl_line(((wd*j) / (view_width / this->trace_min)) - secondTag , (ht / 2) - 5 , (((wd*j) / (view_width / this->trace_min))  - secondTag), (ht / 2) + 5);
+        sprintf(text, "%d", j+time);
+        fl_draw(text, (((wd*j) / (view_width / this->trace_min)) - secondTag), (ht / 2) + 13);
+    }
     /******/
 
     fl_line_style(FL_JOIN_BEVEL, 1);
@@ -362,15 +357,15 @@ void PlotxyFLTK::draw() {
 //             fl_end_line();
 //             fl_begin_line();
 //         }
-        fl_vertex(((float)i / (float)view_width), -view[i]);
+        fl_vertex(((float)i / (float)this->trace_min), -view[i]);
         fl_color(FL_GREEN);
     }
     fl_end_line();
 //     fl_end_points();
     fl_pop_matrix();
-    
+
     /***Plot max value and min value***/
-    
+
     fl_color(FL_WHITE);
     fl_line_style(FL_JOIN_BEVEL, 2);
     /*Plot max value*/
@@ -378,27 +373,27 @@ void PlotxyFLTK::draw() {
     fl_translate(translate_x, translate_y);
     fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
     fl_begin_line();
-    for (i = 0;i < 7;i++) {
+    for (i = 0;i < 7*(view_width / this->trace_min);i++) {
         fl_vertex(((float)i / (float)view_width), -this->vievedMaxValue);
     }
     fl_end_line();
     fl_pop_matrix();
     /**/
-    
+
     /*Plot min value*/
     fl_push_matrix();
     fl_translate(translate_x, translate_y);
     fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
     fl_begin_line();
-    for (i = 0;i < 7;i++) {
+    for (i = 0;i < 7*(view_width / this->trace_min);i++) {
         fl_vertex(((float)i / (float)view_width), -this->vievedMinValue);
     }
     fl_end_line();
     fl_pop_matrix();
     /**/
-    
+
     /*** ***/
-    
+
 
     drawCoordsAndOthers();
 } /* end of draw() method */
@@ -435,7 +430,7 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
 }
 
 void PlotxyFLTK::insertValueToPlot(float value) {
-    float valore=value;
+    float valore = value;
     if (view == NULL) {
 //         cout << "Allow view" << endl;
         view = new float[trace_max];
@@ -477,18 +472,15 @@ void PlotxyFLTK::shift_vector_left(float element) {
     this->view[i-1] = 0.0;
 }
 
-int PlotxyFLTK::getTranslateYValue()
-{
+int PlotxyFLTK::getTranslateYValue() {
     return this->translate_y;
 }
 
-int PlotxyFLTK::getZoomXValue()
-{
+int PlotxyFLTK::getZoomXValue() {
     return this->scale_factor_x;
 }
 
-int PlotxyFLTK::getZoomYValue()
-{
+int PlotxyFLTK::getZoomYValue() {
     return this->scale_factor_y;
 }
 
@@ -519,6 +511,22 @@ void PlotxyFLTK::setYAxis(char* name) {
     this->yAxis.append(name);
 }
 
+void PlotxyFLTK::setTraceMax(int value) {
+    if (!(value % 128))
+        this->trace_max = value;
+    else
+        cout << "Default value set! Value must be power of 2" << endl;
+}
+
+void PlotxyFLTK::setTraceMin(int value) {
+    if (!(value % 128))
+        this->trace_min = value;
+    else
+        cout << "Default value set! Value must be power of 2" << endl;
+}
+
+
+
 void PlotxyFLTK::translateGraphY() {
     if ((this->vievedMinValue == 0) && (this->vievedMaxValue != 0))
         this->translate_y = (y() + (h()));
@@ -534,12 +542,9 @@ void PlotxyFLTK::plotLine() {
 
 
 void PlotxyFLTK::zoomXInc() {
-
-
     this->scale_factor_x /= 2;
     if (this->scale_factor_x < 1) {
         this->scale_factor_x = 1;
-
     }
 
     this->view_width /= 2;
@@ -609,6 +614,3 @@ void PlotxyFLTK::translateYDown() {
         this->translate_y = H;
     this->redraw();
 }
-
-
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;

@@ -16,8 +16,8 @@ target_link_libraries(demoplotxyfltk ${FLTK_LIBRARIES})
 target_link_libraries(demowinplotxyfltk ${FLTK_LIBRARIES})
 
 
-SET(HDRS plotxyfltk.h )
-SET(SRC plotxyfltk.cpp )
+SET(HDRS plotxyfltk.h winplotxyfltk.h )
+SET(SRC plotxyfltk.cpp winplotxyfltk.cpp )
 SET(CMAKEPLOTXYFLTK FindPlotXYFLTK.cmake)
 
 SET (LIBRARYNAME plotxyfltk)

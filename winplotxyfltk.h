@@ -20,6 +20,8 @@
 #ifndef WINPLOTXYFLTK_H
 #define WINPLOTXYFLTK_H
 
+#define BUTTON_SIZE 95
+
 #include "plotxyfltk.h"
 #include "FL/Fl_Double_Window.H"
 #include "FL/Fl_Button.H"
@@ -50,6 +52,7 @@ class WinPlotXYFLTK: public Fl_Window {
         void insertValueToPlot(float value);
         void setXAxis(char *name);
         void setYAxis(char *name);
+        void setAutoZoom(bool value);
 
         //plot line into graph
         void plotLine();
