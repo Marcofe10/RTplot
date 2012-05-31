@@ -104,15 +104,15 @@ class PlotxyFLTK: public Fl_Box {
         int handle(int e);
 
         // Draw mouse coords ant other things
-        void draw_coords();
+        void drawCoordsAndOthers();
 
     public:
         PlotxyFLTK(int xp, int yp, int wp, int hp, const char *lp = 0);
         ~PlotxyFLTK();
         int insertValuesToPlot(float *value, int nvalue);
         void insertValueToPlot(float value);
-        
-        void setAutoScale(bool value);
+
+        void setAutoZoom(bool value);
         void setXAxis(char *name);
         void setYAxis(char *name);
 
@@ -121,11 +121,14 @@ class PlotxyFLTK: public Fl_Box {
         void zoomYDec();
         void zoomYInc();
         void zoomAuto();
+        void translateX();
+        void translateYDown();
+        void translateYUp();
 
         //plot line into graph
         void plotLine();
 
 
 };
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
 #endif

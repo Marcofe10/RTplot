@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 //     float *valori;
 //     valori= new float[512];
 
-    main_win = new WinPlotXYFLTK(0, 0, 800, 600, "Scope Window");
+    main_win = new WinPlotXYFLTK(0, 0, 1000, 600, "Scope Window");
     main_win->show();
 
 //     main_win1 = new WinPlotXYFLTK(0, 0, 800, 600, "Scope Window");

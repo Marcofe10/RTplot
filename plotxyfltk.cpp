@@ -37,9 +37,22 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
     this->W = wp;
     this->H = hp;
 
+    /***DEFAULT VALUES***/
     this->trace_max = 16384;//max number of values
     this->trace_min = 512;//max number of values
     this->view_width = this->trace_min;//numbers showed
+    
+    this->scale_factor_x = 1;
+    this->scale_factor_y = 1;
+    
+    this->enableAutoScaleWhileGraph = true;
+    
+    this->xAxis.append("t");
+    this->yAxis.append("Attention");
+    
+    this->translate_x = x();
+    this->translate_y = (y() + (h() / 2));
+    /******/
 
 //     trace_pos = 0;
 //     view_pos = 0;
@@ -51,17 +64,11 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
 
     this->initial_x = 0;
     this->initial_y = 0;
-
-    this->scale_factor_x = 1;
-    this->scale_factor_y = 1;
-    this->translate_x = x();
-    this->translate_y = (y() + (h() / 2));
-    this->enableAutoScaleWhileGraph = true;
     this->vievedMaxValue = 0;
     this->vievedMinValue = 0;
-    this->xAxis.append("t");
-    this->yAxis.append("Attention");
+
     this->secondTag = 0.0;
+
 
 //     //FIXME don't show Zoom+ and Zoom-
 //     //Popup menu option list
@@ -150,8 +157,8 @@ void PlotxyFLTK::scale(Fl_Widget *widget, void *userdata) {
 void PlotxyFLTK::autoScaleBehaviour(Fl_Widget* widget, void* userdata) {
     cout << "*** AUTOSCALE ***" << endl;
     PlotxyFLTK *in = (PlotxyFLTK*)userdata;
-    in->enableAutoScaleWhileGraph = !in->enableAutoScaleWhileGraph;
-    cout << "enableAutoScaleWhileGraph value:" << in->enableAutoScaleWhileGraph << endl;
+
+    in->zoomAuto();
 
     if (in->rclick_menu[3].value() == 4)
         in->rclick_menu[3].clear();
@@ -248,7 +255,7 @@ int PlotxyFLTK::handle(int e) {
 
 }
 
-void PlotxyFLTK::draw_coords() {
+void PlotxyFLTK::drawCoordsAndOthers() {
     // Coordinates as a string
     char s[80];
     char pres[80];
@@ -357,7 +364,7 @@ void PlotxyFLTK::draw() {
 
     fl_pop_matrix();
 
-    draw_coords();
+    drawCoordsAndOthers();
 } /* end of draw() method */
 
 
@@ -380,9 +387,10 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
     /***autoZoom***/
     if (this->enableAutoScaleWhileGraph) {
         this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
+        this->translateGraphY();
     }
     /******/
-    this->translateGraphY();
+
 
 //     cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
 //     cout << "Min Value:" << fabs(this->vievedMinValue) << endl;
@@ -410,12 +418,13 @@ void PlotxyFLTK::insertValueToPlot(float value) {
         this->vievedMaxValue = getMaxValue(value, this->vievedMaxValue);
         this->vievedMinValue = getMinValue(value, this->vievedMinValue);
         this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
+        this->translateGraphY();
 //         cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
 //         cout << "Min Value:" << fabs(this->vievedMinValue) << endl;
 //         cout << "Scale factor y:" << this->scale_factor_y << endl;
     }
     /******/
-    this->translateGraphY();
+
     this->redraw();
 }
 
@@ -446,9 +455,8 @@ float PlotxyFLTK::getMinValue(float val, float min) {
     else
         return min;
 }
-void PlotxyFLTK::setAutoScale(bool value)
-{
-    this->enableAutoScaleWhileGraph=value;
+void PlotxyFLTK::setAutoZoom(bool value) {
+    this->enableAutoScaleWhileGraph = value;
 }
 
 
@@ -472,7 +480,6 @@ void PlotxyFLTK::translateGraphY() {
 void PlotxyFLTK::plotLine() {
     return ;
 }
-
 
 
 void PlotxyFLTK::zoomXInc() {
@@ -528,4 +535,29 @@ void PlotxyFLTK::zoomYDec() {
 void PlotxyFLTK::zoomAuto() {
     this->enableAutoScaleWhileGraph = !this->enableAutoScaleWhileGraph;
     cout << "enableAutoScaleWhileGraph value:" << this->enableAutoScaleWhileGraph << endl;
+    this->redraw();
 }
+
+void PlotxyFLTK::translateX() {
+    this->translate_x = x();
+    this->translate_y = (y() + (h() / 2));
+}
+
+void PlotxyFLTK::translateYUp() {
+    this->translate_y -= 10;
+    cout << "Translate+ | translate_y:" << this->translate_y << " Y:" << Y << endl;
+    if (this->translate_y <= Y)
+        this->translate_y = Y;
+    this->redraw();
+}
+
+void PlotxyFLTK::translateYDown() {
+    this->translate_y += 10;
+    cout << "Translate- | translate_y:" << this->translate_y << " H:" << H << endl;
+    if (this->translate_y >= H)
+        this->translate_y = H;
+    this->redraw();
+}
+
+
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;

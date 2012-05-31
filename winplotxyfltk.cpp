@@ -36,24 +36,32 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Wind
 //     this->labelZoomY = new Fl_Label(ww+2,35,48,20,"Zoom Y");
     this->buttonZoomYDec = new Fl_Button(ww + 50, 35, 20, 20, "-");
     this->buttonZoomYInc = new Fl_Button(ww + 75, 35, 20, 20, "+");
+    
+    this->buttonTranslateYDown = new Fl_Button(ww + 50, 55, 20, 20, "-");
+    this->buttonTranslateYUp = new Fl_Button(ww + 75, 55, 20, 20, "+");
 
-    this->radioAutoScale = new Fl_Radio_Button(ww + 50, 60, 20, 20);
+    this->checkButtonAutoScale = new Fl_Check_Button(ww + 50, 80, 20, 20);
 
     /***CALLBACKS***/
     this->buttonZoomXDec->callback((Fl_Callback *) this->zoomXDec, this);
     this->buttonZoomXInc->callback((Fl_Callback *) this->zoomXInc, this);
     this->buttonZoomYDec->callback((Fl_Callback *) this->zoomYDec, this);
     this->buttonZoomYInc->callback((Fl_Callback *) this->zoomYInc, this);
+     this->buttonTranslateYDown->callback((Fl_Callback *) this->translateYDown, this);
+    this->buttonTranslateYUp->callback((Fl_Callback *) this->translateYUp, this);
+    this->checkButtonAutoScale->callback((Fl_Callback *) this->zoomAuto, this);
 
 
-    //Property of many buttons
+    /***Properties of many buttons***/
     this->buttonZoomXDec->box(FL_PLASTIC_UP_BOX);
     this->buttonZoomYDec->box(FL_PLASTIC_UP_BOX);
     this->buttonZoomXInc->box(FL_PLASTIC_UP_BOX);
     this->buttonZoomYInc->box(FL_PLASTIC_UP_BOX);
-    this->radioAutoScale->box(FL_PLASTIC_UP_BOX);
-    
-    this->plot->
+    this->buttonTranslateYDown->box(FL_PLASTIC_UP_BOX);
+    this->buttonTranslateYUp->box(FL_PLASTIC_UP_BOX);
+    this->checkButtonAutoScale->box(FL_PLASTIC_UP_BOX);
+
+    this->plot->setAutoZoom(false);
 }
 
 // void WinPlotXYFLTK::draw()
@@ -104,17 +112,25 @@ void WinPlotXYFLTK::zoomYInc(Fl_Widget* widget, void* userdata) {
     in->plot->zoomYInc();
 }
 
-void WinPlotXYFLTK::zoomAuto(Fl_Widget* widget, void* userdata)
-{
+void WinPlotXYFLTK::zoomAuto(Fl_Widget* widget, void* userdata) {
     WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
-    cout<<"Value:"<<in->radioAutoScale->value()<<endl;
-    
-    if (in->radioAutoScale->value() == 4)
-        in->radioAutoScale->clear();
-    else
-        in->radioAutoScale->set();
-    
+    cout << "Value:" << in->checkButtonAutoScale->value() << endl;
+
+    if (in->checkButtonAutoScale->value()) {
+        in->checkButtonAutoScale->set();
+    } else {
+        in->checkButtonAutoScale->clear();
+    }
+
     in->plot->zoomAuto();
 }
+void WinPlotXYFLTK::translateYDown(Fl_Widget* widget, void* userdata) {
+    WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
+    in->plot->translateYDown();
 
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on; 
+}
+void WinPlotXYFLTK::translateYUp(Fl_Widget* widget, void* userdata) {
+    WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
+    in->plot->translateYUp();
+}
+

@@ -24,23 +24,26 @@
 #include "plotxyfltk.h"
 #include "FL/Fl_Double_Window.H"
 #include "FL/Fl_Button.H"
-#include "FL/Fl_Radio_Button.H"
+#include "FL/Fl_Check_Button.H"
 
 class WinPlotXYFLTK: public Fl_Window {
     private:
 
         PlotxyFLTK *plot;
-        Fl_Button *buttonZoomXInc, *buttonZoomXDec, *buttonZoomYInc, *buttonZoomYDec;
+        Fl_Button *buttonZoomXInc, *buttonZoomXDec, *buttonZoomYInc, *buttonZoomYDec,*buttonTranslateYUp,*buttonTranslateYDown;
         Fl_Label *labelZoomX, *labelZoomY;
-        Fl_Radio_Button *radioAutoScale;
+        Fl_Check_Button *checkButtonAutoScale;
 
         static void zoomXInc(Fl_Widget *widget, void *userdata);
         static void zoomXDec(Fl_Widget *widget, void *userdata);
         static void zoomYInc(Fl_Widget *widget, void *userdata);
         static void zoomYDec(Fl_Widget *widget, void *userdata);
         static void zoomAuto(Fl_Widget *widget, void *userdata);
+        static void translateX(Fl_Widget *widget, void *userdata);
+        static void translateYDown(Fl_Widget *widget, void *userdata);
+        static void translateYUp(Fl_Widget *widget, void *userdata);
+        //         void draw();
 
-//         void draw();
     public:
         WinPlotXYFLTK(int X, int Y, int W, int H, const char* l);
         int insertValuesToPlot(float *value, int nvalue);
@@ -55,4 +58,4 @@ class WinPlotXYFLTK: public Fl_Window {
 };
 
 #endif // WINPLOTXYFLTK_H
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on; 
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;
