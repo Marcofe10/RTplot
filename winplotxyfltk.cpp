@@ -23,24 +23,25 @@
 WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Window(X, Y, W, H, l) {
     int xw = X;
     int yw = Y;
-    int ww = W - 100;
+    int ww = W - 150;
     int hw = H;
     this->plot = new PlotxyFLTK(xw, yw, ww, hw);
     //this->plot->show();
     this->box(FL_PLASTIC_UP_BOX);
 
-//     this->labelZoomX = new Fl_Label(ww+2,10,48,20,"Zoom X");
-    this->buttonZoomXDec = new Fl_Button(ww + 50, 10, 20, 20, "-");
-    this->buttonZoomXInc = new Fl_Button(ww + 75, 10, 20, 20, "+");
-
-//     this->labelZoomY = new Fl_Label(ww+2,35,48,20,"Zoom Y");
-    this->buttonZoomYDec = new Fl_Button(ww + 50, 35, 20, 20, "-");
-    this->buttonZoomYInc = new Fl_Button(ww + 75, 35, 20, 20, "+");
+//     this->labelZoomX = new Fl_Label(ww+2,10,48,20);
+    this->buttonZoomXInc = new Fl_Button(ww + 2, 30, 110, 20, "ZoomX +");
+    this->buttonZoomXDec = new Fl_Button(ww + 2, 10, 110, 20, "ZoomX -");
     
-    this->buttonTranslateYDown = new Fl_Button(ww + 50, 55, 20, 20, "-");
-    this->buttonTranslateYUp = new Fl_Button(ww + 75, 55, 20, 20, "+");
 
-    this->checkButtonAutoScale = new Fl_Check_Button(ww + 50, 80, 20, 20);
+//     this->labelZoomY = new Fl_Label();
+    this->buttonZoomYInc = new Fl_Button(ww + 2, 90, 110, 20, "ZoomY +");
+    this->buttonZoomYDec = new Fl_Button(ww + 2, 70, 110, 20, "ZoomY -");
+    
+    this->buttonTranslateYUp = new Fl_Button(ww + 2, 150, 110, 20, "Translate+");
+    this->buttonTranslateYDown = new Fl_Button(ww + 2, 130, 110, 20, "Translate-");
+    
+    this->checkButtonAutoScale = new Fl_Check_Button(ww +2, 190, 110, 20,"Auto Zoom");
 
     /***CALLBACKS***/
     this->buttonZoomXDec->callback((Fl_Callback *) this->zoomXDec, this);

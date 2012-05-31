@@ -41,15 +41,19 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
     this->trace_max = 16384;//max number of values
     this->trace_min = 512;//max number of values
     this->view_width = this->trace_min;//numbers showed
-    
+
+    //Scale Factor
     this->scale_factor_x = 1;
     this->scale_factor_y = 1;
-    
+
+    //Enable AutoZoom
     this->enableAutoScaleWhileGraph = true;
-    
+
+    //X,Y name asix
     this->xAxis.append("t");
     this->yAxis.append("Attention");
-    
+
+    //Translate Factor
     this->translate_x = x();
     this->translate_y = (y() + (h() / 2));
     /******/
@@ -298,13 +302,13 @@ void PlotxyFLTK::draw() {
     fl_line_style(FL_JOIN_BEVEL, 1);
     fl_font(FL_HELVETICA, 10);
 
-    //X asis
+    
 //     fl_line(0, ht / 2, wd, ht / 2);
 //     fl_line(wd - 5, (ht / 2) - 5, wd, ht / 2);
 //     fl_line(wd - 5, (ht / 2) + 5, wd, ht / 2);
 //     fl_draw(this->xAxis.c_str(), wd - 10, ht / 2 + 15);
 
-
+    //X asis
     fl_line(0, this->translate_y, wd, this->translate_y);
     fl_line(wd - 5, (this->translate_y) - 5, wd, this->translate_y);
     fl_line(wd - 5, (this->translate_y) + 5, wd, this->translate_y);
@@ -351,18 +355,34 @@ void PlotxyFLTK::draw() {
     fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
 
     fl_begin_line();
+//     fl_begin_points();
 
     for (i = 0; i < insertsValues; i++) {
 //         if (i == view_break) {
 //             fl_end_line();
 //             fl_begin_line();
 //         }
-        fl_vertex(((float)i / (float)view_width), view[i]);
+        fl_vertex(((float)i / (float)view_width), -view[i]);
         fl_color(FL_GREEN);
     }
     fl_end_line();
-
+//     fl_end_points();
     fl_pop_matrix();
+    //Plot max value and min value
+    
+    fl_color(FL_WHITE);
+    fl_line_style(FL_JOIN_BEVEL, 2);
+    
+    fl_push_matrix();
+    fl_translate(translate_x, translate_y);
+    fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
+    fl_begin_line();
+    for (i = 0;i < 7;i++) {
+        fl_vertex(((float)i / (float)view_width), -this->vievedMaxValue);
+    }
+    fl_end_line();
+    fl_pop_matrix();
+    
 
     drawCoordsAndOthers();
 } /* end of draw() method */
@@ -379,7 +399,7 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
 
     for (int i = 0; i < insertsValues; i++) {
 
-        view[i] = - value[i]; //minus sign is necessary to plot a correct graph
+        view[i] = value[i]; //minus sign is necessary to plot a correct graph
         this->vievedMaxValue = getMaxValue(view[i], this->vievedMaxValue);
         this->vievedMinValue = getMinValue(view[i], this->vievedMinValue);
 
@@ -399,6 +419,7 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
 }
 
 void PlotxyFLTK::insertValueToPlot(float value) {
+    float valore=value;
     if (view == NULL) {
 //         cout << "Allow view" << endl;
         view = new float[trace_max];
@@ -408,15 +429,16 @@ void PlotxyFLTK::insertValueToPlot(float value) {
     if (insertsValues > view_width) {
 
         this->insertsValues = view_width;
-        insertInTail(-value);//minus sign is necessary to plot a correct graph
+        insertInTail(valore);//minus sign is necessary to plot a correct graph
     } else {
-        view[insertsValues-1] = -value;
+        view[insertsValues-1] = valore;
     }
+
+    this->vievedMaxValue = getMaxValue(valore, this->vievedMaxValue);
+    this->vievedMinValue = getMinValue(valore, this->vievedMinValue);
 
     /***autoZoom***/
     if (this->enableAutoScaleWhileGraph) {
-        this->vievedMaxValue = getMaxValue(value, this->vievedMaxValue);
-        this->vievedMinValue = getMinValue(value, this->vievedMinValue);
         this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
         this->translateGraphY();
 //         cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
@@ -560,4 +582,4 @@ void PlotxyFLTK::translateYDown() {
 }
 
 
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
