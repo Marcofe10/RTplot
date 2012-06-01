@@ -587,8 +587,8 @@ void PlotxyFLTK::zoomYInc() {
 
 void PlotxyFLTK::zoomYDec() {
     this->scale_factor_y *= 2;
-    if (this->scale_factor_y >= 32000) {
-        this->scale_factor_y = 32;
+    if (this->scale_factor_y >= 200000) {
+        this->scale_factor_y = 200000;
     }
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
