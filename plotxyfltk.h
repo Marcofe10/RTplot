@@ -80,10 +80,10 @@ class PlotxyFLTK: public Fl_Box {
         bool enableAutoScaleWhileGraph;
 
         //Many scale,translate parameters
-        int scale_factor_x;
-        int scale_factor_y;
+        float scale_factor_x;
+        float scale_factor_y;
         int translate_value;
-        int translate_x, translate_y;
+        float translate_x, translate_y;
 
         //Min max value along y axis
         float vievedMaxValue;
@@ -115,7 +115,9 @@ class PlotxyFLTK: public Fl_Box {
         
         int getZoomXValue();
         int getZoomYValue();
-        int getTranslateYValue();
+        int getTranslateYValue();   
+        int getSimulationSeconds();
+        
         void setAutoZoom(bool value);
         void setXAxis(char *name);
         void setYAxis(char *name);
@@ -126,6 +128,8 @@ class PlotxyFLTK: public Fl_Box {
         void zoomXInc();
         void zoomYDec();
         void zoomYInc();
+        void zoomYDecMouseWheel();
+        void zoomYIncMouseWheel();
         void zoomAuto();
         void translateX();
         void translateYDown();

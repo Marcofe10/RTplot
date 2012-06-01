@@ -43,8 +43,8 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
     this->view_width = this->trace_min;//numbers showed
 
     //Scale Factor
-    this->scale_factor_x = 1;
-    this->scale_factor_y = 1;
+    this->scale_factor_x = 1.0;
+    this->scale_factor_y = 1.0;
 
     //Enable AutoZoom
     this->enableAutoScaleWhileGraph = true;
@@ -54,8 +54,8 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
     this->yAxis.append("Attention");
 
     //Translate Factor
-    this->translate_x = x();
-    this->translate_y = (y() + (h() / 2));
+    this->translate_x = (float) x();
+    this->translate_y = (float)(y() + (h() / 2));
     /******/
 
 //     trace_pos = 0;
@@ -72,7 +72,7 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
     this->vievedMinValue = 0;
 
     this->secondTag = 0.0;
-    this->time=0;
+    this->time = 0;
 
 
 //     //FIXME don't show Zoom+ and Zoom-
@@ -205,16 +205,16 @@ int PlotxyFLTK::handle(int e) {
 //
 //         break;
 
-    case FL_PUSH:
-        if (Fl::event_button() == FL_RIGHT_MOUSE) {
-            const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, 0);
-            if (m)
-                m->do_callback(0, m->user_data());
-            return(1);          // (tells caller we handled this event)
-        }
-
-        return(1);//it allow to use FL_DRAG (see documentation)
-        break;
+//     case FL_PUSH:
+//         if (Fl::event_button() == FL_RIGHT_MOUSE) {
+//             const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, 0);
+//             if (m)
+//                 m->do_callback(0, m->user_data());
+//             return(1);          // (tells caller we handled this event)
+//         }
+//
+//         return(1);//it allow to use FL_DRAG (see documentation)
+//         break;
     case FL_RELEASE:
         // RIGHT MOUSE RELEASED? Mask it from Fl_Input
         if (Fl::event_button() == FL_RIGHT_MOUSE) {
@@ -236,31 +236,30 @@ int PlotxyFLTK::handle(int e) {
 
 
     case FL_MOVE:               // FL_MOVE: mouse movement causes 'user damage' and redraw..
-        //damage(FL_DAMAGE_USER1);
+//         damage(FL_DAMAGE_USER1);
         ret = 1;
         break;
 
     case FL_MOUSEWHEEL:
 
         if (Fl::event_dy() > 0) {
-            this->zoomYInc();
+            this->zoomYIncMouseWheel();
         }
         if (Fl::event_dy() < 0) {
-            this->zoomYDec();
+            this->zoomYDecMouseWheel();
         }
 
-        if (Fl::event_dx() < 0) {
-
-        }
-        if (Fl::event_dx() > 0) {
-
-        }
+//         if (Fl::event_dx() < 0) {
+//
+//         }
+//         if (Fl::event_dx() > 0) {
+//
+//         }
         damage(FL_DAMAGE_USER1);
         ret = 1;
         break;
     }
     return(ret);
-
 }
 
 void PlotxyFLTK::drawCoordsAndOthers() {
@@ -271,7 +270,7 @@ void PlotxyFLTK::drawCoordsAndOthers() {
     char max[10];
     char min[10];
     int i;
-    
+
     sprintf(s[0], "x:%d y:%d", (int)Fl::event_x(), (int)Fl::event_y());
 //     sprintf(pres, "Pres:%d", this->insertsValues);
 //     sprintf(tag, "Pres:%.4f", this->secondTag);
@@ -280,9 +279,8 @@ void PlotxyFLTK::drawCoordsAndOthers() {
 
     fl_color(FL_WHITE);
     fl_font(FL_HELVETICA, 9);
-    for(i=0;i<3;i++)
-    {
-        fl_draw(s[i], this->W - 70, 15+(11*i));
+    for (i = 0;i < 3;i++) {
+        fl_draw(s[i], this->W - 70, 15 + (11*i));
     }
 //     fl_draw(s, this->W - 70, 15);
 //     fl_draw(pres, this->W - 70, 26);
@@ -309,12 +307,6 @@ void PlotxyFLTK::draw() {
     fl_line_style(FL_JOIN_BEVEL, 1);
     fl_font(FL_HELVETICA, 10);
 
-
-//     fl_line(0, ht / 2, wd, ht / 2);
-//     fl_line(wd - 5, (ht / 2) - 5, wd, ht / 2);
-//     fl_line(wd - 5, (ht / 2) + 5, wd, ht / 2);
-//     fl_draw(this->xAxis.c_str(), wd - 10, ht / 2 + 15);
-
     //X asis
     fl_line(0, this->translate_y, wd, this->translate_y);
     fl_line(wd - 5, (this->translate_y) - 5, wd, this->translate_y);
@@ -326,25 +318,19 @@ void PlotxyFLTK::draw() {
     fl_line(0, 0, 5, 5);
     fl_draw(this->yAxis.c_str(), 5, 15);
 
-    fl_line_style(FL_JOIN_BEVEL, 2);
-    /***********************/
 
+    /***********************/
+    fl_line_style(FL_JOIN_BEVEL, 2);
     fl_color(FL_WHITE);
     fl_font(FL_HELVETICA, 10);
 
 
     /***Second tag***/
-    if (this->insertsValues >= view_width) {
-        secondTag += (float) wd / view_width ;
-        if (this->secondTag >= wd / (float)((view_width / this->trace_min))) {
-            this->secondTag = 0.0;
-            time++;
-        }
-    }
+
     fl_line_style(FL_JOIN_BEVEL, 2);
     for (j = 1;j <= (view_width / this->trace_min);j++) {
         fl_line(((wd*j) / (view_width / this->trace_min)) - secondTag , (this->translate_y) - 5 , (((wd*j) / (view_width / this->trace_min))  - secondTag), (this->translate_y) + 5);
-        sprintf(text, "%d", j+time);
+        sprintf(text, "%d", j + time);
         fl_draw(text, (((wd*j) / (view_width / this->trace_min)) - secondTag), (this->translate_y) + 13);
     }
     /******/
@@ -427,11 +413,11 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
         this->translateGraphY();
     }
     /******/
-
-
 //     cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
 //     cout << "Min Value:" << fabs(this->vievedMinValue) << endl;
 //     cout << "Scale factor y:" << this->scale_factor_y << endl;
+
+    this->redraw();
     return 0;
 }
 
@@ -443,6 +429,14 @@ void PlotxyFLTK::insertValueToPlot(float value) {
     }
 
     this->insertsValues++;
+
+    if (this->insertsValues >= view_width) {
+        secondTag += (float) W / view_width ;
+        if (this->secondTag >= W / (float)((view_width / this->trace_min))) {
+            this->secondTag = 0.0;
+            time++;
+        }
+    }
     if (insertsValues > view_width) {
 
         this->insertsValues = view_width;
@@ -504,6 +498,11 @@ float PlotxyFLTK::getMinValue(float val, float min) {
     else
         return min;
 }
+
+int PlotxyFLTK::getSimulationSeconds() {
+    return this->time;
+}
+
 void PlotxyFLTK::setAutoZoom(bool value) {
     this->enableAutoScaleWhileGraph = value;
 }
@@ -620,3 +619,23 @@ void PlotxyFLTK::translateYDown() {
         this->translate_y = H;
     this->redraw();
 }
+
+
+void PlotxyFLTK::zoomYIncMouseWheel() {
+    this->scale_factor_y -= 10;
+    if (this->scale_factor_y < 1) {
+        this->scale_factor_y = 1;
+    }
+    cout << "Zoom+ | scale_factor_y:" << this->scale_factor_y << endl;
+    this->redraw();
+}
+
+void PlotxyFLTK::zoomYDecMouseWheel() {
+    this->scale_factor_y += 10;
+    if (this->scale_factor_y >= 200000) {
+        this->scale_factor_y = 200000;
+    }
+    cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
+    this->redraw();
+}
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on; 

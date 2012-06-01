@@ -45,6 +45,8 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Wind
 
     this->checkButtonAutoScale = new Fl_Check_Button(ww + 2, 190, 110, 20, "Auto Zoom");
 
+    this->valueOutputTimeSimulations = new Fl_Value_Output(ww + 2, 300, 110, 20, "Auto Zoom");
+
     /***CALLBACKS***/
     this->buttonZoomXDec->callback((Fl_Callback *) this->zoomXDec, this);
     this->buttonZoomXInc->callback((Fl_Callback *) this->zoomXInc, this);
@@ -73,7 +75,9 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Wind
 }
 
 void WinPlotXYFLTK::draw() {
-
+    this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds()+1);
+    this->valueOutputTimeSimulations->redraw();
+//     this->plot->redraw();
     Fl_Window::draw();
 }
 
@@ -88,6 +92,7 @@ void WinPlotXYFLTK::insertValueToPlot(float value) {
 
 int WinPlotXYFLTK::insertValuesToPlot(float* value, int nvalue) {
     this->plot->insertValuesToPlot(value, nvalue);
+    this->plot->redraw();
 }
 
 void WinPlotXYFLTK::plotLine() {
@@ -105,6 +110,7 @@ void WinPlotXYFLTK::setYAxis(char* name) {
 void WinPlotXYFLTK::setAutoZoom(bool value) {
     this->checkButtonAutoScale->value(value);
     this->plot->setAutoZoom(value);
+
     if (this->checkButtonAutoScale->value()) {
         this->checkButtonAutoScale->set();
 
@@ -124,6 +130,7 @@ void WinPlotXYFLTK::setAutoZoom(bool value) {
         this->buttonZoomYDec->activate();
         this->buttonZoomYInc->activate();
     }
+
     this->redraw();
 }
 
@@ -185,4 +192,4 @@ void WinPlotXYFLTK::translateYUp(Fl_Widget* widget, void* userdata) {
     in->plot->translateYUp();
 }
 
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;

@@ -66,14 +66,14 @@ int main(int argc, char **argv) {
     for (i = 0; i < 10*N; i++) {
 
         if (i > 10)
-            valori[i] =2 * sin((double)(i * 5 * 2 * M_PI / (double)N));
+            valori[i] =250 * sin((double)(i * 5 * 2 * M_PI / (double)N));
         else
             valori[i] = 0;
     }
     cout << "Valori Generati" << endl;
 
+//     Fl::add_timeout(0.5, update_scope, valori);
     Fl::add_timeout(0.5, update_scope, valori);
-//     Fl::add_timeout(0.5, update_scope1, valori);
     return Fl::run();
 }
 // kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;

@@ -34,7 +34,7 @@ class WinPlotXYFLTK: public Fl_Window {
         PlotxyFLTK *plot;
         Fl_Button *buttonZoomXInc, *buttonZoomXDec, *buttonZoomYInc, *buttonZoomYDec, *buttonTranslateYUp, *buttonTranslateYDown;
         Fl_Check_Button *checkButtonAutoScale;
-        Fl_Value_Output *valueOutputZoomX, *valueOutputZoomY, *valueOutputTranslateY;
+        Fl_Value_Output *valueOutputZoomX, *valueOutputZoomY, *valueOutputTranslateY,*valueOutputTimeSimulations;
 
         static void zoomXInc(Fl_Widget *widget, void *userdata);
         static void zoomXDec(Fl_Widget *widget, void *userdata);
