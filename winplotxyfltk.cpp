@@ -74,12 +74,12 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Wind
     this->valueOutputZoomY->value(plot->getZoomYValue());
 }
 
-void WinPlotXYFLTK::draw() {
-    this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds()+1);
-    this->valueOutputTimeSimulations->redraw();
-//     this->plot->redraw();
-    Fl_Window::draw();
-}
+// void WinPlotXYFLTK::draw() {
+//     this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds()+1);
+//     this->valueOutputTimeSimulations->redraw();
+// //     this->plot->redraw();
+//     Fl_Window::draw();
+// }
 
 
 void WinPlotXYFLTK::insertValueToPlot(float value) {

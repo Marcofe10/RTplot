@@ -44,7 +44,7 @@ class WinPlotXYFLTK: public Fl_Window {
         static void translateX(Fl_Widget *widget, void *userdata);
         static void translateYDown(Fl_Widget *widget, void *userdata);
         static void translateYUp(Fl_Widget *widget, void *userdata);
-        void draw();
+//         void draw();
 
     public:
         WinPlotXYFLTK(int X, int Y, int W, int H, const char* l);

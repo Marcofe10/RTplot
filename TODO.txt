@@ -1,1 +1,10 @@
-+
+****SVILUPPI FUTURI****
+
++ Plottare il valore max e min nelle coordinata
++ Problema Zoom avanti e poi indietro
++ Possibilità di ottenere FullScreen
+
+
+
+****BUG****
++ Eliminare quello sfarfallio nel plot
