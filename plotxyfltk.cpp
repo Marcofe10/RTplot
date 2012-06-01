@@ -262,27 +262,30 @@ int PlotxyFLTK::handle(int e) {
 
 void PlotxyFLTK::drawCoordsAndOthers() {
     // Coordinates as a string
-    char s[80];
+    char s[5][80];
     char pres[80];
     char tag[80];
     char max[10];
     char min[10];
-    sprintf(s, "x:%d y:%d", (int)Fl::event_x(), (int)Fl::event_y());
-    sprintf(pres, "Pres:%d", this->insertsValues);
-    sprintf(tag, "Pres:%.4f", this->secondTag);
-    sprintf(max, "Max:%.4f", this->vievedMaxValue);
-    sprintf(min, "Min:%.4f", this->vievedMinValue);
-    // Black rect
-//     fl_color(FL_BLACK);
-//     fl_rectf(10, 10, 200, 25);
-    // White text
+    int i;
+    
+    sprintf(s[0], "x:%d y:%d", (int)Fl::event_x(), (int)Fl::event_y());
+//     sprintf(pres, "Pres:%d", this->insertsValues);
+//     sprintf(tag, "Pres:%.4f", this->secondTag);
+    sprintf(s[1], "Max:%.4f", this->vievedMaxValue);
+    sprintf(s[2], "Min:%.4f", this->vievedMinValue);
+
     fl_color(FL_WHITE);
-    fl_font(FL_HELVETICA, 10);
-    fl_draw(s, this->W - 70, 15);
-    fl_draw(pres, this->W - 70, 26);
-    fl_draw(tag, this->W - 70, 37);
-    fl_draw(max, this->W - 70, 48);
-    fl_draw(min, this->W - 70, 59);
+    fl_font(FL_HELVETICA, 9);
+    for(i=0;i<3;i++)
+    {
+        fl_draw(s[i], this->W - 70, 15+(11*i));
+    }
+//     fl_draw(s, this->W - 70, 15);
+//     fl_draw(pres, this->W - 70, 26);
+//     fl_draw(tag, this->W - 70, 37);
+//     fl_draw(max, this->W - 70, 48);
+//     fl_draw(min, this->W - 70, 59);
 }
 
 
@@ -337,9 +340,9 @@ void PlotxyFLTK::draw() {
     }
     fl_line_style(FL_JOIN_BEVEL, 2);
     for (j = 1;j <= (view_width / this->trace_min);j++) {
-        fl_line(((wd*j) / (view_width / this->trace_min)) - secondTag , (ht / 2) - 5 , (((wd*j) / (view_width / this->trace_min))  - secondTag), (ht / 2) + 5);
+        fl_line(((wd*j) / (view_width / this->trace_min)) - secondTag , (this->translate_y) - 5 , (((wd*j) / (view_width / this->trace_min))  - secondTag), (this->translate_y) + 5);
         sprintf(text, "%d", j+time);
-        fl_draw(text, (((wd*j) / (view_width / this->trace_min)) - secondTag), (ht / 2) + 13);
+        fl_draw(text, (((wd*j) / (view_width / this->trace_min)) - secondTag), (this->translate_y) + 13);
     }
     /******/
 

@@ -105,6 +105,26 @@ void WinPlotXYFLTK::setYAxis(char* name) {
 void WinPlotXYFLTK::setAutoZoom(bool value) {
     this->checkButtonAutoScale->value(value);
     this->plot->setAutoZoom(value);
+    if (this->checkButtonAutoScale->value()) {
+        this->checkButtonAutoScale->set();
+
+        this->buttonTranslateYDown->deactivate();
+        this->buttonTranslateYUp->deactivate();
+        this->buttonZoomXDec->deactivate();
+        this->buttonZoomXInc->deactivate();
+        this->buttonZoomYDec->deactivate();
+        this->buttonZoomYInc->deactivate();
+    } else {
+        this->checkButtonAutoScale->clear();
+
+        this->buttonTranslateYDown->activate();
+        this->buttonTranslateYUp->activate();
+        this->buttonZoomXDec->activate();
+        this->buttonZoomXInc->activate();
+        this->buttonZoomYDec->activate();
+        this->buttonZoomYInc->activate();
+    }
+    this->redraw();
 }
 
 
