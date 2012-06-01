@@ -221,13 +221,13 @@ int PlotxyFLTK::handle(int e) {
             return(1);          // (tells caller we handled this event)
         }
 
-        if (Fl::event_button() == FL_LEFT_MOUSE) {
-            fl_color(FL_WHITE);
-            fl_rect(initial_x, initial_y, abs((int)Fl::event_x() - initial_x), abs((int)Fl::event_y() - initial_y));
-            initial_x = 0;
-            initial_y = 0;
-            return(1);          // (tells caller we handled this event)
-        }
+//         if (Fl::event_button() == FL_LEFT_MOUSE) {
+//             fl_color(FL_WHITE);
+//             fl_rect(initial_x, initial_y, abs((int)Fl::event_x() - initial_x), abs((int)Fl::event_y() - initial_y));
+//             initial_x = 0;
+//             initial_y = 0;
+//             return(1);          // (tells caller we handled this event)
+//         }
         break;
 
     case FL_ENTER:
@@ -242,16 +242,19 @@ int PlotxyFLTK::handle(int e) {
 
     case FL_MOUSEWHEEL:
 
-//         if (Fl::event_dy() > 0) {
-//             translate_y -= 3;
-//         }
-//
-//         if (Fl::event_dx() < 0) {
-//
-//         }
-//         if (Fl::event_dx() > 0) {
-//
-//         }
+        if (Fl::event_dy() > 0) {
+            this->zoomYInc();
+        }
+        if (Fl::event_dy() < 0) {
+            this->zoomYDec();
+        }
+
+        if (Fl::event_dx() < 0) {
+
+        }
+        if (Fl::event_dx() > 0) {
+
+        }
         damage(FL_DAMAGE_USER1);
         ret = 1;
         break;
@@ -584,7 +587,7 @@ void PlotxyFLTK::zoomYInc() {
 
 void PlotxyFLTK::zoomYDec() {
     this->scale_factor_y *= 2;
-    if (this->scale_factor_y >= 200000) {
+    if (this->scale_factor_y >= 32000) {
         this->scale_factor_y = 32;
     }
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
