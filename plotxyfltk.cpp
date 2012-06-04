@@ -32,11 +32,6 @@
 using namespace std;
 
 PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(xp, yp, wp, hp, lp) {
-    this->X = xp;
-    this->Y = yp;
-    this->W = wp;
-    this->H = hp;
-
     /***DEFAULT VALUES***/
     this->trace_max = 16384;//max number of values
     this->trace_min = 512;//mix number of values
@@ -280,7 +275,7 @@ void PlotxyFLTK::drawCoordsAndOthers() {
     fl_color(FL_WHITE);
     fl_font(FL_HELVETICA, 9);
     for (i = 0;i < 3;i++) {
-        fl_draw(s[i], this->W - 70, 15 + (11*i));
+        fl_draw(s[i], this->w() - 70, 15 + (11*i));
     }
 //     fl_draw(s, this->W - 70, 15);
 //     fl_draw(pres, this->W - 70, 26);
@@ -360,6 +355,7 @@ void PlotxyFLTK::draw() {
 
     fl_color(FL_WHITE);
     fl_line_style(FL_JOIN_BEVEL, 2);
+
     /*Plot max value*/
     fl_push_matrix();
     fl_translate(translate_x, translate_y);
@@ -367,9 +363,11 @@ void PlotxyFLTK::draw() {
     fl_begin_line();
     for (i = 0;i < 7*(view_width / this->trace_min);i++) {
         fl_vertex(((float)i / (float)view_width), -this->vievedMaxValue);
+//         cout<<"fl_transform_x:"<<fl_transform_x(((float)i / (float)view_width), -this->vievedMaxValue)<<endl;
     }
     fl_end_line();
     fl_pop_matrix();
+
     /**/
 
     /*Plot min value*/
@@ -385,8 +383,6 @@ void PlotxyFLTK::draw() {
     /**/
 
     /*** ***/
-
-
     drawCoordsAndOthers();
 } /* end of draw() method */
 
@@ -431,8 +427,8 @@ void PlotxyFLTK::insertValueToPlot(float value) {
     this->insertsValues++;
 
     if (this->insertsValues >= view_width) {
-        secondTag += (float) W / view_width ;
-        if (this->secondTag >= W / (float)((view_width / this->trace_min))) {
+        secondTag += (float) w() / view_width ;
+        if (this->secondTag >= w() / (float)((view_width / this->trace_min))) {
             this->secondTag = 0.0;
             time++;
         }
@@ -606,17 +602,17 @@ void PlotxyFLTK::translateX() {
 
 void PlotxyFLTK::translateYUp() {
     this->translate_y -= 10;
-    cout << "Translate+ | translate_y:" << this->translate_y << " Y:" << Y << endl;
-    if (this->translate_y <= Y)
-        this->translate_y = Y;
+    cout << "Translate+ | translate_y:" << this->translate_y << " Y:" << y() << endl;
+    if (this->translate_y <= y())
+        this->translate_y = y();
     this->redraw();
 }
 
 void PlotxyFLTK::translateYDown() {
     this->translate_y += 10;
-    cout << "Translate- | translate_y:" << this->translate_y << " H:" << H << endl;
-    if (this->translate_y >= H)
-        this->translate_y = H;
+    cout << "Translate- | translate_y:" << this->translate_y << " H:" << h() << endl;
+    if (this->translate_y >= h())
+        this->translate_y = h();
     this->redraw();
 }
 
@@ -638,4 +634,4 @@ void PlotxyFLTK::zoomYDecMouseWheel() {
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on; 
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;

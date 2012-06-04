@@ -33,8 +33,11 @@ class WinPlotXYFLTK: public Fl_Window {
 
         PlotxyFLTK *plot;
         Fl_Button *buttonZoomXInc, *buttonZoomXDec, *buttonZoomYInc, *buttonZoomYDec, *buttonTranslateYUp, *buttonTranslateYDown;
+        Fl_Button *checkButtonFullScreen;
         Fl_Check_Button *checkButtonAutoScale;
         Fl_Value_Output *valueOutputZoomX, *valueOutputZoomY, *valueOutputTranslateY,*valueOutputTimeSimulations;
+        
+        int X,Y,W,H;
 
         static void zoomXInc(Fl_Widget *widget, void *userdata);
         static void zoomXDec(Fl_Widget *widget, void *userdata);
@@ -44,6 +47,7 @@ class WinPlotXYFLTK: public Fl_Window {
         static void translateX(Fl_Widget *widget, void *userdata);
         static void translateYDown(Fl_Widget *widget, void *userdata);
         static void translateYUp(Fl_Widget *widget, void *userdata);
+        static void fullScreen(Fl_Widget *widget, void *userdata);
 //         void draw();
 
     public:

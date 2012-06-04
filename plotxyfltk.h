@@ -35,7 +35,6 @@ using namespace std;
  */
 class PlotxyFLTK: public Fl_Box {
     private:
-        int X, Y, W, H;
         int trace_max;//max number of values
         int trace_min;//min number of values
         int view_width;//numbers showed

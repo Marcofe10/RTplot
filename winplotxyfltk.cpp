@@ -21,10 +21,16 @@
 #include "winplotxyfltk.h"
 
 WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Window(X, Y, W, H, l) {
-    int xw = X + 1;
-    int yw = Y + 1;
-    int ww = W - 150;
-    int hw = H - 1;
+
+    this->X = x();
+    this->Y = y();
+    this->W = w();
+    this->H = h();
+
+    int xw = x() + 1;
+    int yw = y() + 1;
+    int ww = w() - 150;
+    int hw = h() - 1;
 
 
     this->plot = new PlotxyFLTK(xw, yw, ww, hw);
@@ -47,6 +53,8 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Wind
 
     this->valueOutputTimeSimulations = new Fl_Value_Output(ww + 2, 300, 110, 20, "Auto Zoom");
 
+    this->checkButtonFullScreen = new Fl_Check_Button(ww + 2, 330, 110, 20, "FullScreen");
+
     /***CALLBACKS***/
     this->buttonZoomXDec->callback((Fl_Callback *) this->zoomXDec, this);
     this->buttonZoomXInc->callback((Fl_Callback *) this->zoomXInc, this);
@@ -55,6 +63,7 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Wind
     this->buttonTranslateYDown->callback((Fl_Callback *) this->translateYDown, this);
     this->buttonTranslateYUp->callback((Fl_Callback *) this->translateYUp, this);
     this->checkButtonAutoScale->callback((Fl_Callback *) this->zoomAuto, this);
+    this->checkButtonFullScreen->callback((Fl_Callback *) this->fullScreen, this);
 
 
     /***Properties of many buttons***/
@@ -192,4 +201,57 @@ void WinPlotXYFLTK::translateYUp(Fl_Widget* widget, void* userdata) {
     in->plot->translateYUp();
 }
 
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+void WinPlotXYFLTK::fullScreen(Fl_Widget* widget, void* userdata) {
+    WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
+    int xw, yw, ww, hw;
+
+    if (in->checkButtonFullScreen->value()) {     
+        in->checkButtonFullScreen->set();
+
+        in->fullscreen();  
+        
+        xw = in->x() + 1;
+        yw = in->y() + 1;
+        ww = in->w() - 150;
+        hw = in->h() - 1;
+
+        in->plot->resize(xw, yw, ww, hw);
+        in->buttonZoomXInc->resize(ww + 2, 10, BUTTON_SIZE, 20);
+        in->buttonZoomXDec->resize(ww + 2, 30, BUTTON_SIZE, 20);
+        in->valueOutputZoomX->resize(ww + BUTTON_SIZE + 5, 20, 45, 20);
+        in->buttonZoomYInc->resize(ww + 2, 70, BUTTON_SIZE, 20);
+        in->buttonZoomYDec->resize(ww + 2, 90, BUTTON_SIZE, 20);
+        in->valueOutputZoomY->resize(ww + BUTTON_SIZE + 5, 80, 45, 20);
+        in->buttonTranslateYUp->resize(ww + 2, 130, BUTTON_SIZE, 20);
+        in->buttonTranslateYDown->resize(ww + 2, 150, BUTTON_SIZE, 20);
+        in->valueOutputTranslateY->resize(ww + BUTTON_SIZE + 5, 140, 45, 20);
+        in->checkButtonAutoScale->resize(ww + 2, 190, 110, 20);
+        in->valueOutputTimeSimulations->resize(ww + 2, 300, 110, 20);
+        in->checkButtonFullScreen->resize(ww + 2, 330, BUTTON_SIZE, 20);
+    } else {
+        in->checkButtonFullScreen->clear();
+        
+        in->fullscreen_off(in->X,in->Y,in->W,in->H);
+        
+        xw=in->X+1;
+        yw=in->Y+1;
+        ww=in->W-150;
+        hw=in->H-1;
+        
+        in->plot->resize(xw, yw, ww, hw);
+        in->buttonZoomXInc->resize(ww + 2, 10, BUTTON_SIZE, 20);
+        in->buttonZoomXDec->resize(ww + 2, 30, BUTTON_SIZE, 20);
+        in->valueOutputZoomX->resize(ww + BUTTON_SIZE + 5, 20, 45, 20);
+        in->buttonZoomYInc->resize(ww + 2, 70, BUTTON_SIZE, 20);
+        in->buttonZoomYDec->resize(ww + 2, 90, BUTTON_SIZE, 20);
+        in->valueOutputZoomY->resize(ww + BUTTON_SIZE + 5, 80, 45, 20);
+        in->buttonTranslateYUp->resize(ww + 2, 130, BUTTON_SIZE, 20);
+        in->buttonTranslateYDown->resize(ww + 2, 150, BUTTON_SIZE, 20);
+        in->valueOutputTranslateY->resize(ww + BUTTON_SIZE + 5, 140, 45, 20);
+        in->checkButtonAutoScale->resize(ww + 2, 190, 110, 20);
+        in->valueOutputTimeSimulations->resize(ww + 2, 300, 110, 20);
+        in->checkButtonFullScreen->resize(ww + 2, 330, BUTTON_SIZE, 20);
+    }
+    in->redraw();
+}
+
