@@ -28,6 +28,8 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Item.H>
 
+#define NVERTICAL 5
+
 
 using namespace std;
 /*
@@ -94,6 +96,7 @@ class PlotxyFLTK: public Fl_Box {
 
         string xAxis, yAxis;
 
+        float intermidiateSecondsTag;
         float secondTag;//Use to move second tag (line to sign seconds)
         int time;
         Fl_Menu_Item *rclick_menu;

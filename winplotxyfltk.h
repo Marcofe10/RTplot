@@ -32,9 +32,11 @@ class WinPlotXYFLTK: public Fl_Window {
     private:
 
         PlotxyFLTK *plot;
-        Fl_Button *buttonZoomXInc, *buttonZoomXDec, *buttonZoomYInc, *buttonZoomYDec, *buttonTranslateYUp, *buttonTranslateYDown;
-        Fl_Button *checkButtonFullScreen;
-        Fl_Check_Button *checkButtonAutoScale;
+        
+        Fl_Button *buttonZoomXInc, *buttonZoomXDec, *buttonZoomYInc, *buttonZoomYDec, *buttonTranslateYUp;
+        Fl_Button *buttonTranslateYDown;
+        
+        Fl_Check_Button *checkButtonAutoScale,*checkButtonFullScreen;;
         Fl_Value_Output *valueOutputZoomX, *valueOutputZoomY, *valueOutputTranslateY,*valueOutputTimeSimulations;
         
         int X,Y,W,H;

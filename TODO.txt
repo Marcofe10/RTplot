@@ -1,10 +1,17 @@
 ****SVILUPPI FUTURI****
 
-+ Plottare il valore max e min nelle coordinata
-+ Problema Zoom avanti e poi indietro
-+ Possibilità di ottenere FullScreen
++ Plottare il valore max e min nelle coordinate
++ Plottare griglia
++ Possibilità di ottere il valore corrispondente al grafico passando col mouse di sopra
++
++FORSE USARE OPENGL
 
 
 
 ****BUG****
 + Eliminare quello sfarfallio nel plot
++ Problema Zoom avanti e poi indietro
+
+
+*** O K ***
++ Possibilità di ottenere FullScreen(ok 04/06)

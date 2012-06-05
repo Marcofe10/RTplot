@@ -24,6 +24,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Printer.H>
+#include <FL/x.H>
 
 #include <cmath>
 #include <iostream>
@@ -292,6 +293,8 @@ void PlotxyFLTK::draw() {
     int xo = x();
     int yo = y();
     int j, i;
+    float incf, stepf;
+    float xf, yf;
     char text[20];
 
     fl_color(FL_BLACK);
@@ -299,37 +302,42 @@ void PlotxyFLTK::draw() {
     fl_color(FL_WHITE);
 
     /*******Plot axes*******/
-    fl_line_style(FL_JOIN_BEVEL, 1);
+    fl_line_style(FL_JOIN_BEVEL, 3);
     fl_font(FL_HELVETICA, 10);
 
     //X asis
     fl_line(0, this->translate_y, wd, this->translate_y);
-    fl_line(wd - 5, (this->translate_y) - 5, wd, this->translate_y);
-    fl_line(wd - 5, (this->translate_y) + 5, wd, this->translate_y);
+    fl_line(wd - 7, (this->translate_y) - 7, wd, this->translate_y);
+    fl_line(wd - 7, (this->translate_y) + 7, wd, this->translate_y);
     fl_draw(this->xAxis.c_str(), wd - 10, this->translate_y + 15);
 
     //Y axis
     fl_line(0, 0, 0, ht);
-    fl_line(0, 0, 5, 5);
+    fl_line(0, 0, 7, 7);
     fl_draw(this->yAxis.c_str(), 5, 15);
-
-
     /***********************/
-    fl_line_style(FL_JOIN_BEVEL, 2);
-    fl_color(FL_WHITE);
-    fl_font(FL_HELVETICA, 10);
 
 
     /***Second tag***/
-
-    fl_line_style(FL_JOIN_BEVEL, 2);
+    fl_color(FL_RED);
+    fl_font(FL_HELVETICA, 10);
+    fl_line_style(FL_JOIN_BEVEL, 3);
     for (j = 1;j <= (view_width / this->trace_min);j++) {
-        fl_line(((wd*j) / (view_width / this->trace_min)) - secondTag , (this->translate_y) - 5 , (((wd*j) / (view_width / this->trace_min))  - secondTag), (this->translate_y) + 5);
+        fl_line(((wd*j) / (view_width / this->trace_min)) - this->secondTag , (this->translate_y) - 5 , (((wd*j) / (view_width / this->trace_min))  - this->secondTag), (this->translate_y) + 5);
         sprintf(text, "%d", j + time);
-        fl_draw(text, (((wd*j) / (view_width / this->trace_min)) - secondTag), (this->translate_y) + 13);
+        fl_draw(text, (((wd*j) / (view_width / this->trace_min)) - this->secondTag), (this->translate_y) + 13);
     }
+
     /******/
 
+    //     fl_line_style(FL_DOT, 1);
+//     fl_color(FL_WHITE);
+//     for (j = 1;j <= (NVERTICAL*(view_width / this->trace_min));j++) {
+//         fl_line(((wd*j) / (NVERTICAL*(view_width / this->trace_min))) - this->intermidiateSecondsTag , 0 , (((wd*j) / (NVERTICAL*(view_width / this->trace_min)))  - this->intermidiateSecondsTag), ht);
+//     }
+//     fl_draw("val", 100, ((ht / this->scale_factor_y)));
+
+    fl_color(FL_WHITE);
     fl_line_style(FL_JOIN_BEVEL, 1);
 
     fl_push_matrix();
@@ -340,10 +348,6 @@ void PlotxyFLTK::draw() {
 //     fl_begin_points();
 
     for (i = 0; i < insertsValues; i++) {
-//         if (i == view_break) {
-//             fl_end_line();
-//             fl_begin_line();
-//         }
         fl_vertex(((float)i / (float)this->trace_min), -view[i]);
         fl_color(FL_GREEN);
     }
@@ -352,8 +356,7 @@ void PlotxyFLTK::draw() {
     fl_pop_matrix();
 
     /***Plot max value and min value***/
-
-    fl_color(FL_WHITE);
+    fl_color(FL_RED);
     fl_line_style(FL_JOIN_BEVEL, 2);
 
     /*Plot max value*/
@@ -361,8 +364,8 @@ void PlotxyFLTK::draw() {
     fl_translate(translate_x, translate_y);
     fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
     fl_begin_line();
-    for (i = 0;i < 7*(view_width / this->trace_min);i++) {
-        fl_vertex(((float)i / (float)view_width), -this->vievedMaxValue);
+    for (i = 0;i < 5*(view_width / this->trace_min);i++) {
+        fl_vertex(((float)i / (float)this->trace_min), -this->vievedMaxValue);
 //         cout<<"fl_transform_x:"<<fl_transform_x(((float)i / (float)view_width), -this->vievedMaxValue)<<endl;
     }
     fl_end_line();
@@ -375,14 +378,48 @@ void PlotxyFLTK::draw() {
     fl_translate(translate_x, translate_y);
     fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
     fl_begin_line();
-    for (i = 0;i < 7*(view_width / this->trace_min);i++) {
-        fl_vertex(((float)i / (float)view_width), -this->vievedMinValue);
+    for (i = 0;i < 5*(view_width / this->trace_min);i++) {
+        fl_vertex(((float)i / (float)this->trace_min), -this->vievedMinValue);
     }
     fl_end_line();
+
     fl_pop_matrix();
     /**/
 
     /*** ***/
+
+    fl_color(FL_WHITE);
+    fl_line_style(FL_DOT , 1);
+    fl_push_matrix();
+    fl_translate(translate_x, translate_y);
+    fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
+
+
+    //Plot horizontal axis (divide plot into ten parts)
+    stepf = (fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) / 10;
+    for (incf = this->vievedMinValue;incf < (this->vievedMaxValue) + stepf;incf += stepf) {
+        fl_begin_line();
+        for (j = 0;j < this->view_width;j++) {
+            fl_vertex(((float)j / (float)this->trace_min), -incf);
+        }
+        fl_end_line();
+    }
+
+//     stepf =(float) 128 / (this->view_width) ;
+//     cout << "stepf:" << stepf << endl;
+//     for (xf = 0.0; xf < 1.0;xf += stepf) {
+//         //cout << "xf:" << xf << endl;
+//         fl_begin_line();
+//         for (yf = this->vievedMinValue;yf <= this->vievedMaxValue;yf += 1.0) {
+//             fl_vertex(xf, yf);
+//         }
+//         fl_end_line();
+//     }
+
+
+    fl_pop_matrix();
+
+
     drawCoordsAndOthers();
 } /* end of draw() method */
 
@@ -419,22 +456,32 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
 
 void PlotxyFLTK::insertValueToPlot(float value) {
     float valore = value;
+    float step;
     if (view == NULL) {
 //         cout << "Allow view" << endl;
         view = new float[trace_max];
     }
 
     this->insertsValues++;
-
+    step = (float) w() / view_width ;
+    //Used to animate secondTag
     if (this->insertsValues >= view_width) {
-        secondTag += (float) w() / view_width ;
+        this->secondTag += step ;
         if (this->secondTag >= w() / (float)((view_width / this->trace_min))) {
             this->secondTag = 0.0;
             time++;
         }
     }
-    if (insertsValues > view_width) {
 
+    //Vertical line like to break view_width into NVERTICAL quadranti
+//     if (this->insertsValues >= view_width) {
+//         this->intermidiateSecondsTag += step ;
+//         if (this->intermidiateSecondsTag > (w() / (NVERTICAL*((view_width / this->trace_min))))) {
+//             this->intermidiateSecondsTag = 0.0;
+//         }
+//     }
+
+    if (insertsValues > view_width) {
         this->insertsValues = view_width;
         insertInTail(valore);//minus sign is necessary to plot a correct graph
     } else {
@@ -634,4 +681,6 @@ void PlotxyFLTK::zoomYDecMouseWheel() {
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+
+

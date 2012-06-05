@@ -255,3 +255,4 @@ void WinPlotXYFLTK::fullScreen(Fl_Widget* widget, void* userdata) {
     in->redraw();
 }
 
+
