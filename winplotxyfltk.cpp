@@ -20,7 +20,7 @@
 
 #include "winplotxyfltk.h"
 
-WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Window(X, Y, W, H, l) {
+WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Double_Window(X, Y, W, H, l) {
 
     this->X = x();
     this->Y = y();

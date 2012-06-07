@@ -9,7 +9,7 @@
 
 
 ****BUG****
-+ Eliminare quello sfarfallio nel plot
++ Eliminare quello sfarfallio nel plot(usato Fl_Double_Window 070612.1905)
 + Problema Zoom avanti e poi indietro
 
 

@@ -28,7 +28,7 @@
 #include "FL/Fl_Check_Button.H"
 #include "FL/Fl_Value_Output.H"
 
-class WinPlotXYFLTK: public Fl_Window {
+class WinPlotXYFLTK: public Fl_Double_Window {
     private:
 
         PlotxyFLTK *plot;
