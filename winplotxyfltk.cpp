@@ -101,8 +101,10 @@ void WinPlotXYFLTK::insertValueToPlot(float value) {
 }
 
 int WinPlotXYFLTK::insertValuesToPlot(float* value, int nvalue) {
-    this->plot->insertValuesToPlot(value, nvalue);
+    int rit;
+    rit=this->plot->insertValuesToPlot(value, nvalue);
     this->plot->redraw();
+    return rit;
 }
 
 void WinPlotXYFLTK::plotLine() {
@@ -148,6 +150,12 @@ void WinPlotXYFLTK::setViedWidth(int value)
 {
     plot->setViedWidth(value);
 }
+
+int WinPlotXYFLTK::getSimulationSeconds()
+{
+    this->plot->getSimulationSeconds();
+}
+
 
 /* * * STATIC FUNCTION * * */
 

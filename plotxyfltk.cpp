@@ -296,7 +296,7 @@ void PlotxyFLTK::draw() {
     float incf, stepf;
     float xf, yf;
     char text[20];
-    
+
     if (this->enableAutoScaleWhileGraph) {
         //Recalculate scale_factor_y
         this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
@@ -406,7 +406,15 @@ void PlotxyFLTK::draw() {
 
     //Plot horizontal axis (divide plot into ten parts)
     stepf = (fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) / 10;
-    for (incf = this->vievedMinValue;incf < (this->vievedMaxValue) + stepf;incf += stepf) {
+    for (incf = this->vievedMinValue;incf < 0 ;incf += stepf) {
+        fl_begin_line();
+        for (j = 0;j < this->view_width;j++) {
+            fl_vertex(((float)j / (float)this->trace_min), -incf);
+        }
+        fl_end_line();
+    }
+
+    for (incf = 0;incf < (this->vievedMaxValue) + stepf;incf += stepf) {
         fl_begin_line();
         for (j = 0;j < this->view_width;j++) {
             fl_vertex(((float)j / (float)this->trace_min), -incf);
@@ -440,11 +448,18 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
     if (view == NULL) {
         view = new float[trace_max];
     }
-    this->insertsValues = nvalue;
 
-    for (int i = 0; i < insertsValues; i++) {
+    for (int i = 0; i < nvalue; i++) {
+        
+        if (this->insertsValues > view_width) {
+            this->insertsValues = view_width;
+            insertInTail(value[i]);//minus sign is necessary to plot a correct graph
+        } else {
+            view[this->insertsValues] = value[i];
+            this->insertsValues++;
+        }
 
-        view[i] = value[i]; //minus sign is necessary to plot a correct graph
+        //view[i] = value[i]; //minus sign is necessary to plot a correct graph
         this->vievedMaxValue = getMaxValue(view[i], this->vievedMaxValue);
         this->vievedMinValue = getMinValue(view[i], this->vievedMinValue);
 
@@ -460,7 +475,7 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
 //     cout << "Scale factor y:" << this->scale_factor_y << endl;
 
     this->redraw();
-    return 0;
+    return nvalue;
 }
 
 void PlotxyFLTK::insertValueToPlot(float value) {
@@ -719,6 +734,3 @@ void PlotxyFLTK::zoomYDecMouseWheel() {
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
-
-

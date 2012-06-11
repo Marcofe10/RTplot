@@ -34,7 +34,7 @@ int k;
 void update_scope(void *valori) {
     float *val = (float*)valori;
     main_win->insertValueToPlot(val[k]);
-//     cout<<val[k]<<endl;
+
     k++;
     Fl::repeat_timeout(0.01, update_scope, valori);
 }
@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 //     float *valori;
 //     valori= new float[512];
 
-    main_win = new WinPlotXYFLTK(0, 0, 1000, 600, "Scope Window");   
+    main_win = new WinPlotXYFLTK(0, 0, 1000, 600, "Scope Window");
     main_win->setAutoZoom(true);
     main_win->free_position();
     main_win->show();
@@ -71,10 +71,14 @@ int main(int argc, char **argv) {
         else
             valori[i] = 0;
     }
-    cout << "Valori Generati" << endl;
+    cout << "Valori Generati:" << 10*N << endl;
+    k = 0;
+    k += main_win->insertValuesToPlot(valori, 123);
+    k += main_win->insertValuesToPlot(valori, 123);
 
+    cout <<"K:"<< k << endl;
 //     Fl::add_timeout(0.5, update_scope, valori);
     Fl::add_timeout(0.5, update_scope, valori);
     return Fl::run();
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
