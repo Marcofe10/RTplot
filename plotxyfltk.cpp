@@ -34,8 +34,8 @@ using namespace std;
 
 PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(xp, yp, wp, hp, lp) {
     /***DEFAULT VALUES***/
-    this->trace_max = 16384;//max number of values
-    this->trace_min = 512;//mix number of values
+    this->trace_max = 65536;//max number of values
+    this->trace_min = 512;//min number of values
     this->view_width = this->trace_min;//numbers showed
 
     //Scale Factor
@@ -296,6 +296,15 @@ void PlotxyFLTK::draw() {
     float incf, stepf;
     float xf, yf;
     char text[20];
+    
+    if (this->enableAutoScaleWhileGraph) {
+        //Recalculate scale_factor_y
+        this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
+
+        //Translate it in correct position
+        this->translateGraphY();
+
+    }
 
     fl_color(FL_BLACK);
     fl_rectf(xo, yo, wd, ht);
@@ -547,7 +556,17 @@ int PlotxyFLTK::getSimulationSeconds() {
 }
 
 void PlotxyFLTK::setAutoZoom(bool value) {
+    //Enable/Disable Autoscale
     this->enableAutoScaleWhileGraph = value;
+
+    //Recalculate scale_factor_y
+    this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
+
+    //Translate it in correct position
+    this->translateGraphY();
+
+    //Redraw everything
+    this->redraw();
 }
 
 
@@ -571,6 +590,17 @@ void PlotxyFLTK::setTraceMin(int value) {
         this->trace_min = value;
     else
         cout << "Default value set! Value must be power of 2" << endl;
+}
+
+void PlotxyFLTK::setViedWidth(int value) {
+    if (value <= 32) {
+        this->scale_factor_x = value;
+        this->view_width *= value;
+    } else {
+        this->scale_factor_x = 32;
+        this->view_width = this->trace_max;
+    }
+
 }
 
 
@@ -639,6 +669,14 @@ void PlotxyFLTK::zoomYDec() {
 void PlotxyFLTK::zoomAuto() {
     this->enableAutoScaleWhileGraph = !this->enableAutoScaleWhileGraph;
     cout << "enableAutoScaleWhileGraph value:" << this->enableAutoScaleWhileGraph << endl;
+
+    //Recalculate scale_factor_y
+    this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
+
+    //Translate it in correct position
+    this->translateGraphY();
+
+    //Redraw everything
     this->redraw();
 }
 
@@ -681,6 +719,6 @@ void PlotxyFLTK::zoomYDecMouseWheel() {
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
 
 

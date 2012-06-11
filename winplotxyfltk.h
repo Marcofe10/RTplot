@@ -50,7 +50,7 @@ class WinPlotXYFLTK: public Fl_Double_Window {
         static void translateYDown(Fl_Widget *widget, void *userdata);
         static void translateYUp(Fl_Widget *widget, void *userdata);
         static void fullScreen(Fl_Widget *widget, void *userdata);
-//         void draw();
+        void draw();
 
     public:
         WinPlotXYFLTK(int X, int Y, int W, int H, const char* l);
@@ -59,6 +59,8 @@ class WinPlotXYFLTK: public Fl_Double_Window {
         void setXAxis(char *name);
         void setYAxis(char *name);
         void setAutoZoom(bool value);
+        void setViedWidth(int value);
+
 
         //plot line into graph
         void plotLine();

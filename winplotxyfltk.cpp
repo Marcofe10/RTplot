@@ -83,12 +83,13 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Doub
     this->valueOutputZoomY->value(plot->getZoomYValue());
 }
 
-// void WinPlotXYFLTK::draw() {
-//     this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds()+1);
-//     this->valueOutputTimeSimulations->redraw();
-// //     this->plot->redraw();
-//     Fl_Window::draw();
-// }
+void WinPlotXYFLTK::draw() {
+    this->valueOutputZoomX->value(this->plot->getZoomXValue());
+    this->valueOutputZoomY->value(this->plot->getZoomYValue());
+    this->valueOutputTranslateY->value(this->plot->getTranslateYValue());
+//     this->plot->redraw();
+     Fl_Window::draw();
+}
 
 
 void WinPlotXYFLTK::insertValueToPlot(float value) {
@@ -125,8 +126,8 @@ void WinPlotXYFLTK::setAutoZoom(bool value) {
 
         this->buttonTranslateYDown->deactivate();
         this->buttonTranslateYUp->deactivate();
-        this->buttonZoomXDec->deactivate();
-        this->buttonZoomXInc->deactivate();
+//         this->buttonZoomXDec->deactivate();
+//         this->buttonZoomXInc->deactivate();
         this->buttonZoomYDec->deactivate();
         this->buttonZoomYInc->deactivate();
     } else {
@@ -134,8 +135,8 @@ void WinPlotXYFLTK::setAutoZoom(bool value) {
 
         this->buttonTranslateYDown->activate();
         this->buttonTranslateYUp->activate();
-        this->buttonZoomXDec->activate();
-        this->buttonZoomXInc->activate();
+//         this->buttonZoomXDec->activate();
+//         this->buttonZoomXInc->activate();
         this->buttonZoomYDec->activate();
         this->buttonZoomYInc->activate();
     }
@@ -143,26 +144,35 @@ void WinPlotXYFLTK::setAutoZoom(bool value) {
     this->redraw();
 }
 
+void WinPlotXYFLTK::setViedWidth(int value)
+{
+    plot->setViedWidth(value);
+}
 
+/* * * STATIC FUNCTION * * */
 
 void WinPlotXYFLTK::zoomXDec(Fl_Widget* widget, void* userdata) {
     WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
     in->plot->zoomXDec();
+    in->redraw();
 }
 
 void WinPlotXYFLTK::zoomXInc(Fl_Widget* widget, void* userdata) {
     WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
     in->plot->zoomXInc();
+    in->redraw();
 }
 
 void WinPlotXYFLTK::zoomYDec(Fl_Widget* widget, void* userdata) {
     WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
     in->plot->zoomYDec();
+    in->redraw();
 }
 
 void WinPlotXYFLTK::zoomYInc(Fl_Widget* widget, void* userdata) {
     WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
     in->plot->zoomYInc();
+    in->redraw();
 }
 
 void WinPlotXYFLTK::zoomAuto(Fl_Widget* widget, void* userdata) {
@@ -174,8 +184,8 @@ void WinPlotXYFLTK::zoomAuto(Fl_Widget* widget, void* userdata) {
 
         in->buttonTranslateYDown->deactivate();
         in->buttonTranslateYUp->deactivate();
-        in->buttonZoomXDec->deactivate();
-        in->buttonZoomXInc->deactivate();
+//         in->buttonZoomXDec->deactivate();
+//         in->buttonZoomXInc->deactivate();
         in->buttonZoomYDec->deactivate();
         in->buttonZoomYInc->deactivate();
     } else {
@@ -183,22 +193,24 @@ void WinPlotXYFLTK::zoomAuto(Fl_Widget* widget, void* userdata) {
 
         in->buttonTranslateYDown->activate();
         in->buttonTranslateYUp->activate();
-        in->buttonZoomXDec->activate();
-        in->buttonZoomXInc->activate();
+//         in->buttonZoomXDec->activate();
+//         in->buttonZoomXInc->activate();
         in->buttonZoomYDec->activate();
         in->buttonZoomYInc->activate();
     }
-
+    
     in->plot->zoomAuto();
 }
 
 void WinPlotXYFLTK::translateYDown(Fl_Widget* widget, void* userdata) {
     WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
     in->plot->translateYDown();
+    in->redraw();
 }
 void WinPlotXYFLTK::translateYUp(Fl_Widget* widget, void* userdata) {
     WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
     in->plot->translateYUp();
+    in->redraw();
 }
 
 void WinPlotXYFLTK::fullScreen(Fl_Widget* widget, void* userdata) {
@@ -252,7 +264,10 @@ void WinPlotXYFLTK::fullScreen(Fl_Widget* widget, void* userdata) {
         in->valueOutputTimeSimulations->resize(ww + 2, 300, 110, 20);
         in->checkButtonFullScreen->resize(ww + 2, 330, BUTTON_SIZE, 20);
     }
+    in->plot->redraw();
     in->redraw();
 }
+
+/* * * E N D STATIC FUNCTION  * * */
 
 

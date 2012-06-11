@@ -125,6 +125,8 @@ class PlotxyFLTK: public Fl_Box {
         void setYAxis(char *name);
         void setTraceMin(int value);
         void setTraceMax(int value);
+        void setViedWidth(int value);
+
 
         void zoomXDec();
         void zoomXInc();
