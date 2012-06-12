@@ -442,34 +442,55 @@ void PlotxyFLTK::draw() {
 
 
 int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
+    float step;
     if (nvalue > trace_max)
         return -1;
 
     if (view == NULL) {
         view = new float[trace_max];
     }
-
+    //Calculates step to secondTag
+    step = (float) w() / view_width ;
+    
     for (int i = 0; i < nvalue; i++) {
+        this->insertsValues++;
         
+        //Used to animate secondTag
+//         if (this->insertsValues >= view_width) {
+//             this->secondTag += step ;
+//             if (this->secondTag >= w() / (float)((view_width / this->trace_min))) {
+//                 this->secondTag = 0.0;
+//                 time++;
+//             }
+//         }
         if (this->insertsValues > view_width) {
             this->insertsValues = view_width;
             insertInTail(value[i]);//minus sign is necessary to plot a correct graph
+            
+            //Used to animate secondTag
+            this->secondTag += step ;
+            if (this->secondTag >= w() / (float)((view_width / this->trace_min))) {
+                this->secondTag = 0.0;
+                time++;
+            }
         } else {
             view[this->insertsValues] = value[i];
-            this->insertsValues++;
         }
 
         //view[i] = value[i]; //minus sign is necessary to plot a correct graph
-        this->vievedMaxValue = getMaxValue(view[i], this->vievedMaxValue);
-        this->vievedMinValue = getMinValue(view[i], this->vievedMinValue);
+        this->vievedMaxValue = getMaxValue(value[i], this->vievedMaxValue);
+        this->vievedMinValue = getMinValue(value[i], this->vievedMinValue);
 
+        /***autoZoom***/
+        if (this->enableAutoScaleWhileGraph) {
+            this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
+            this->translateGraphY();
+        }
+        /******/
+
+        
     }
-    /***autoZoom***/
-    if (this->enableAutoScaleWhileGraph) {
-        this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
-        this->translateGraphY();
-    }
-    /******/
+
 //     cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
 //     cout << "Min Value:" << fabs(this->vievedMinValue) << endl;
 //     cout << "Scale factor y:" << this->scale_factor_y << endl;
@@ -487,7 +508,9 @@ void PlotxyFLTK::insertValueToPlot(float value) {
     }
 
     this->insertsValues++;
+
     step = (float) w() / view_width ;
+
     //Used to animate secondTag
     if (this->insertsValues >= view_width) {
         this->secondTag += step ;
@@ -624,7 +647,7 @@ void PlotxyFLTK::translateGraphY() {
     if ((this->vievedMinValue == 0) && (this->vievedMaxValue != 0))
         this->translate_y = (y() + (h()));
     else if ((this->vievedMinValue != 0) && (this->vievedMaxValue == 0))
-        this->translate_y = (y() + (h()));
+        this->translate_y = (y());
     else
         this->translate_y = (y() + (h() / 2));
 }
@@ -734,3 +757,5 @@ void PlotxyFLTK::zoomYDecMouseWheel() {
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
 }
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;
+

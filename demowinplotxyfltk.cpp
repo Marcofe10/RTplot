@@ -34,9 +34,10 @@ int k;
 void update_scope(void *valori) {
     float *val = (float*)valori;
     main_win->insertValueToPlot(val[k]);
+//         k += main_win->insertValuesToPlot(val, 300);
 
     k++;
-    Fl::repeat_timeout(0.01, update_scope, valori);
+    Fl::repeat_timeout(0.5, update_scope, valori);
 }
 
 // void update_scope1(void *valori) {
@@ -57,7 +58,6 @@ int main(int argc, char **argv) {
 
     main_win = new WinPlotXYFLTK(0, 0, 1000, 600, "Scope Window");
     main_win->setAutoZoom(true);
-    main_win->free_position();
     main_win->show();
 
 //     main_win1 = new WinPlotXYFLTK(0, 0, 800, 600, "Scope Window");
@@ -66,15 +66,16 @@ int main(int argc, char **argv) {
 
     for (i = 0; i < 10*N; i++) {
 
-        if (i > 10)
+        if (i > 100)
             valori[i] = sin((double)(i * 5 * 2 * M_PI / (double)N));
         else
-            valori[i] = 0;
+            valori[i] = -i;
     }
     cout << "Valori Generati:" << 10*N << endl;
     k = 0;
-    k += main_win->insertValuesToPlot(valori, 123);
-    k += main_win->insertValuesToPlot(valori, 123);
+    cout <<"K:"<< k << endl;
+    k = main_win->insertValuesToPlot(valori, 10);
+    
 
     cout <<"K:"<< k << endl;
 //     Fl::add_timeout(0.5, update_scope, valori);
