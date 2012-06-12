@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
         if (i > 100)
             valori[i] = sin((double)(i * 5 * 2 * M_PI / (double)N));
         else
-            valori[i] = -i;
+            valori[i] = i;
     }
     cout << "Valori Generati:" << 10*N << endl;
     k = 0;

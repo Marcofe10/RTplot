@@ -641,11 +641,9 @@ void PlotxyFLTK::setViedWidth(int value) {
 
 }
 
-
-
 void PlotxyFLTK::translateGraphY() {
     if ((this->vievedMinValue == 0) && (this->vievedMaxValue != 0))
-        this->translate_y = (y() + (h()));
+        this->translate_y = (y() + (h()-15));
     else if ((this->vievedMinValue != 0) && (this->vievedMaxValue == 0))
         this->translate_y = (y());
     else
@@ -655,7 +653,6 @@ void PlotxyFLTK::translateGraphY() {
 void PlotxyFLTK::plotLine() {
     return ;
 }
-
 
 void PlotxyFLTK::zoomXInc() {
     this->scale_factor_x /= 2;
