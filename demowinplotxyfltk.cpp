@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
     cout << "Valori Generati:" << 10*N << endl;
     k = 0;
     cout <<"K:"<< k << endl;
-    k = main_win->insertValuesToPlot(valori, 10);
+    k = main_win->insertValuesToPlot(valori, 10,10);
     
 
     cout <<"K:"<< k << endl;

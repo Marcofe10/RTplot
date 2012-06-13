@@ -36,8 +36,9 @@ using namespace std;
 
 PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(xp, yp, wp, hp, lp) {
     /***DEFAULT VALUES***/
-    this->trace_max = 65536;//max number of values
+    
     this->trace_min = 512;//min number of values
+    this->trace_max = this->trace_min *128;//max number of values 65536
     this->view_width = this->trace_min;//numbers showed
 
     //Scale Factor
@@ -445,7 +446,7 @@ void PlotxyFLTK::draw() {
         fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
         fl_begin_line();
 
-        for (i = 0;i < this->insertsValues;i++)
+        for (i = 0;i < this->view_width;i++)
             fl_vertex((float) i / (float)this->trace_min, this->plotLineInGraphValue);
 
         fl_end_line();
@@ -471,7 +472,7 @@ void PlotxyFLTK::draw() {
 } /* end of draw() method */
 
 
-int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
+int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue,int trace_min) {
     float step;
     if (nvalue > trace_max)
         return -1;
@@ -479,6 +480,8 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
     if (view == NULL) {
         view = new float[trace_max];
     }
+    this->setTraceMin(trace_min);
+    cout<<"this->trace_min"<<this->trace_min<<endl;
     //Calculates step to secondTag
     step = (float) w() / view_width ;
 
@@ -663,10 +666,12 @@ void PlotxyFLTK::setTraceMax(int value) {
 }
 
 void PlotxyFLTK::setTraceMin(int value) {
-    if (!(value % 128))
+//     if (!(value % 128)){
         this->trace_min = value;
-    else
-        cout << "Default value set! Value must be power of 2" << endl;
+        this->view_width = this->trace_min;
+//     }
+//     else
+//         cout << "Default value set! Value must be power of 2" << endl;
 }
 
 void PlotxyFLTK::setViedWidth(int value) {

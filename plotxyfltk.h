@@ -123,7 +123,7 @@ class PlotxyFLTK: public Fl_Box {
     public:
         PlotxyFLTK(int xp, int yp, int wp, int hp, const char *lp = 0);
         ~PlotxyFLTK();
-        int insertValuesToPlot(float *value, int nvalue);
+        int insertValuesToPlot(float *value, int nvalue,int trace_min=512);
         void insertValueToPlot(float value);
 
 

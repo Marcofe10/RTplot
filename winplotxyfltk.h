@@ -54,12 +54,14 @@ class WinPlotXYFLTK: public Fl_Double_Window {
 
     public:
         WinPlotXYFLTK(int X, int Y, int W, int H, const char* l);
-        int insertValuesToPlot(float *value, int nvalue);
+        int insertValuesToPlot(float* value, int nvalue,int trace_min=512);
         void insertValueToPlot(float value);
+        
         void setXAxis(char *name);
         void setYAxis(char *name);
         void setAutoZoom(bool value);
         void setViedWidth(int value);
+        void setTraceMin(int value);
         
         
         int getSimulationSeconds();

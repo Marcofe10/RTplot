@@ -103,9 +103,10 @@ void WinPlotXYFLTK::insertValueToPlot(float value) {
     this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds());
 }
 
-int WinPlotXYFLTK::insertValuesToPlot(float* value, int nvalue) {
+int WinPlotXYFLTK::insertValuesToPlot(float* value, int nvalue,int trace_min) {
     int rit;
-    rit=this->plot->insertValuesToPlot(value, nvalue);
+    
+    rit=this->plot->insertValuesToPlot(value, nvalue,trace_min);
     
     this->valueOutputZoomX->value(this->plot->getZoomXValue());
     this->valueOutputZoomY->value(this->plot->getZoomYValue());
@@ -119,7 +120,7 @@ int WinPlotXYFLTK::insertValuesToPlot(float* value, int nvalue) {
 void WinPlotXYFLTK::plotLine(float value) {
     this->plot->plotLine(value);
 }
-
+/**** SET FUNCTION ****/
 void WinPlotXYFLTK::setXAxis(char* name) {
     this->plot->setXAxis(name);
 }
@@ -159,6 +160,13 @@ void WinPlotXYFLTK::setViedWidth(int value)
 {
     plot->setViedWidth(value);
 }
+
+void WinPlotXYFLTK::setTraceMin(int value)
+{
+    plot->setTraceMin(value);
+}
+
+/**** END SET FUNCTION ****/
 
 int WinPlotXYFLTK::getSimulationSeconds()
 {
