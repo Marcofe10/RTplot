@@ -34,11 +34,12 @@ int k;
 void update_scope(void *valori) {
     float *val = (float*)valori;
     main_win->insertValueToPlot(val[k]);
-    main_win->plotLine(0.5);
+    
 //         k += main_win->insertValuesToPlot(val, 300);
 
     k++;
-    Fl::repeat_timeout(0.002, update_scope, valori);
+    //0.002
+    Fl::repeat_timeout(0.02, update_scope, valori);
 }
 
 // void update_scope1(void *valori) {
@@ -67,10 +68,10 @@ int main(int argc, char **argv) {
 
     for (i = 0; i < 10*N; i++) {
 
-        if (i > 100)
+        if (i > 10)
             valori[i] = sin((double)(i * 5 * 2 * M_PI / (double)N));
-//         else
-//             valori[i] = i;
+        else
+            valori[i] = 0;
     }
     cout << "Valori Generati:" << 10*N << endl;
     k = 0;
@@ -81,6 +82,7 @@ int main(int argc, char **argv) {
     cout <<"K:"<< k << endl;
 //     Fl::add_timeout(0.5, update_scope, valori);
     Fl::add_timeout(0.5, update_scope, valori);
+    main_win->plotLine(0.5);
     return Fl::run();
 }
 // kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;

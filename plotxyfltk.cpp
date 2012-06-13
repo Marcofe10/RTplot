@@ -74,6 +74,9 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
 
     this->simulationTime = second_clock::local_time();
 
+    this->plotLineInGraph = false;
+    this->plotLineInGraphValue = 0;
+
 
 //     //FIXME don't show Zoom+ and Zoom-
 //     //Popup menu option list
@@ -431,6 +434,23 @@ void PlotxyFLTK::draw() {
         }
         fl_end_line();
     }
+    fl_pop_matrix();
+
+    //Plot line into Graph at
+    if (this->plotLineInGraph) {
+        fl_color(FL_BLUE);
+        fl_line_style(FL_JOIN_BEVEL , 2);
+        fl_push_matrix();
+        fl_translate(translate_x, translate_y);
+        fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
+        fl_begin_line();
+
+        for (i = 0;i < this->insertsValues;i++)
+            fl_vertex((float) i / (float)this->trace_min, this->plotLineInGraphValue);
+
+        fl_end_line();
+        fl_pop_matrix();
+    }
 
 //     stepf =(float) 128 / (this->view_width) ;
 //     cout << "stepf:" << stepf << endl;
@@ -444,7 +464,7 @@ void PlotxyFLTK::draw() {
 //     }
 
 
-    fl_pop_matrix();
+    
 
 
     drawCoordsAndOthers();
@@ -671,20 +691,9 @@ void PlotxyFLTK::translateGraphY() {
 }
 
 void PlotxyFLTK::plotLine(float value) {
-    int i;
 
-    fl_color(FL_BLUE);
-    fl_line_style(FL_JOIN_BEVEL , 2);
-    fl_push_matrix();
-    fl_translate(translate_x, translate_y);
-    fl_scale(this->w() / this->scale_factor_x, this->h() / this->scale_factor_y);
-    fl_begin_line();
-
-    for (i = 0;i < this->view_width;i++)
-        fl_vertex((float) i / (float)this->trace_min, -value);
-
-    fl_end_line();
-    fl_pop_matrix();
+    this->plotLineInGraph = true;
+    this->plotLineInGraphValue = -value;
     return ;
 }
 
@@ -788,5 +797,5 @@ void PlotxyFLTK::zoomYDecMouseWheel() {
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
 

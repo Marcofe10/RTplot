@@ -34,7 +34,7 @@
 
 
 using namespace std;
-using namespace boost::posix_time; 
+using namespace boost::posix_time;
 /*
  * Classe inerente alla parte grafica
  */
@@ -104,10 +104,14 @@ class PlotxyFLTK: public Fl_Box {
         float secondTag;//Use to move second tag (line to sign seconds)
         int time;
         Fl_Menu_Item *rclick_menu;
-        
+
         ptime simulationTime;
-        
-        
+
+        //Used to plot line into graph
+        bool plotLineInGraph;
+        float plotLineInGraphValue;
+
+
 
 
     protected:
@@ -122,12 +126,12 @@ class PlotxyFLTK: public Fl_Box {
         int insertValuesToPlot(float *value, int nvalue);
         void insertValueToPlot(float value);
 
-        
+
         int getZoomXValue();
         int getZoomYValue();
-        int getTranslateYValue();   
+        int getTranslateYValue();
         int getSimulationSeconds();
-        
+
         void setAutoZoom(bool value);
         void setXAxis(char *name);
         void setYAxis(char *name);
@@ -152,5 +156,5 @@ class PlotxyFLTK: public Fl_Box {
 
 
 };
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
 #endif
