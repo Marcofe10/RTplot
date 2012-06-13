@@ -74,6 +74,9 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Doub
     this->buttonTranslateYDown->box(FL_PLASTIC_UP_BOX);
     this->buttonTranslateYUp->box(FL_PLASTIC_UP_BOX);
     this->checkButtonAutoScale->box(FL_PLASTIC_UP_BOX);
+    this->checkButtonAutoScale->shortcut("a");
+    this->checkButtonFullScreen->box(FL_PLASTIC_UP_BOX);
+    this->checkButtonFullScreen->shortcut("f");
 
     this->plot->setAutoZoom(false);
 
@@ -87,10 +90,10 @@ void WinPlotXYFLTK::draw() {
     this->valueOutputZoomX->value(this->plot->getZoomXValue());
     this->valueOutputZoomY->value(this->plot->getZoomYValue());
     this->valueOutputTranslateY->value(this->plot->getTranslateYValue());
-    
+
     this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds());
 //     this->plot->redraw();
-     Fl_Window::draw();
+    Fl_Window::draw();
 }
 
 
@@ -103,16 +106,16 @@ void WinPlotXYFLTK::insertValueToPlot(float value) {
     this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds());
 }
 
-int WinPlotXYFLTK::insertValuesToPlot(float* value, int nvalue,int trace_min) {
+int WinPlotXYFLTK::insertValuesToPlot(float* value, int nvalue, int samplePerSecond) {
     int rit;
-    
-    rit=this->plot->insertValuesToPlot(value, nvalue,trace_min);
-    
+
+    rit = this->plot->insertValuesToPlot(value, nvalue, samplePerSecond);
+
     this->valueOutputZoomX->value(this->plot->getZoomXValue());
     this->valueOutputZoomY->value(this->plot->getZoomYValue());
     this->valueOutputTranslateY->value(this->plot->getTranslateYValue());
     this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds());
-    
+
     this->plot->redraw();
     return rit;
 }
@@ -156,20 +159,17 @@ void WinPlotXYFLTK::setAutoZoom(bool value) {
     this->redraw();
 }
 
-void WinPlotXYFLTK::setViedWidth(int value)
-{
+void WinPlotXYFLTK::setViedWidth(int value) {
     plot->setViedWidth(value);
 }
 
-void WinPlotXYFLTK::setTraceMin(int value)
-{
+void WinPlotXYFLTK::setTraceMin(int value) {
     plot->setTraceMin(value);
 }
 
 /**** END SET FUNCTION ****/
 
-int WinPlotXYFLTK::getSimulationSeconds()
-{
+int WinPlotXYFLTK::getSimulationSeconds() {
     this->plot->getSimulationSeconds();
 }
 
@@ -223,7 +223,7 @@ void WinPlotXYFLTK::zoomAuto(Fl_Widget* widget, void* userdata) {
         in->buttonZoomYDec->activate();
         in->buttonZoomYInc->activate();
     }
-    
+
     in->plot->zoomAuto();
 }
 
@@ -242,11 +242,11 @@ void WinPlotXYFLTK::fullScreen(Fl_Widget* widget, void* userdata) {
     WinPlotXYFLTK *in = (WinPlotXYFLTK*)userdata;
     int xw, yw, ww, hw;
 
-    if (in->checkButtonFullScreen->value()) {     
+    if (in->checkButtonFullScreen->value()) {
         in->checkButtonFullScreen->set();
 
-        in->fullscreen();  
-        
+        in->fullscreen();
+
         xw = in->x() + 1;
         yw = in->y() + 1;
         ww = in->w() - 150;
@@ -267,14 +267,14 @@ void WinPlotXYFLTK::fullScreen(Fl_Widget* widget, void* userdata) {
         in->checkButtonFullScreen->resize(ww + 2, 330, BUTTON_SIZE, 20);
     } else {
         in->checkButtonFullScreen->clear();
-        
-        in->fullscreen_off(in->X,in->Y,in->W,in->H);
-        
-        xw=in->X+1;
-        yw=in->Y+1;
-        ww=in->W-150;
-        hw=in->H-1;
-        
+
+        in->fullscreen_off(in->X, in->Y, in->W, in->H);
+
+        xw = in->X + 1;
+        yw = in->Y + 1;
+        ww = in->W - 150;
+        hw = in->H - 1;
+
         in->plot->resize(xw, yw, ww, hw);
         in->buttonZoomXInc->resize(ww + 2, 10, BUTTON_SIZE, 20);
         in->buttonZoomXDec->resize(ww + 2, 30, BUTTON_SIZE, 20);
@@ -296,3 +296,4 @@ void WinPlotXYFLTK::fullScreen(Fl_Widget* widget, void* userdata) {
 /* * * E N D STATIC FUNCTION  * * */
 
 
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on; 

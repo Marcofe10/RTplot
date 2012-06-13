@@ -102,6 +102,7 @@ class PlotxyFLTK: public Fl_Box {
 
         float intermidiateSecondsTag;
         float secondTag;//Use to move second tag (line to sign seconds)
+        int samplePerSecond;//Sample per second. Use to plot secondtag in relationship of view_width
         int time;
         Fl_Menu_Item *rclick_menu;
 
@@ -123,7 +124,7 @@ class PlotxyFLTK: public Fl_Box {
     public:
         PlotxyFLTK(int xp, int yp, int wp, int hp, const char *lp = 0);
         ~PlotxyFLTK();
-        int insertValuesToPlot(float *value, int nvalue,int trace_min=512);
+        int insertValuesToPlot(float *value, int nvalue,int samplePerSecond=512);
         void insertValueToPlot(float value);
 
 

@@ -54,7 +54,7 @@ class WinPlotXYFLTK: public Fl_Double_Window {
 
     public:
         WinPlotXYFLTK(int X, int Y, int W, int H, const char* l);
-        int insertValuesToPlot(float* value, int nvalue,int trace_min=512);
+        int insertValuesToPlot(float* value, int nvalue,int samplePerSecond=512);
         void insertValueToPlot(float value);
         
         void setXAxis(char *name);
