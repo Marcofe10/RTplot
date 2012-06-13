@@ -26,6 +26,8 @@
 #include <FL/Fl_Printer.H>
 #include <FL/x.H>
 
+#include <boost/date_time.hpp>
+
 #include <cmath>
 #include <iostream>
 #include "plotxyfltk.h"
@@ -70,6 +72,8 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
     this->secondTag = 0.0;
     this->time = 0;
 
+    this->simulationTime = second_clock::local_time();
+
 
 //     //FIXME don't show Zoom+ and Zoom-
 //     //Popup menu option list
@@ -87,6 +91,8 @@ PlotxyFLTK::~PlotxyFLTK() {
     delete [] this->trace;
     delete [] this->view;
 }
+
+/**** STATIC FUNCTION ****/
 
 // void PlotxyFLTK::zoomInc(Fl_Widget *widget, void *userdata) {
 //     cout << "*** ZOOM + ***" << endl;
@@ -145,6 +151,8 @@ PlotxyFLTK::~PlotxyFLTK() {
 //
 // }
 
+
+
 void PlotxyFLTK::scale(Fl_Widget *widget, void *userdata) {
     cout << "*** AUTOZOOM ***" << endl;
     PlotxyFLTK *in = (PlotxyFLTK*)userdata;
@@ -167,6 +175,8 @@ void PlotxyFLTK::autoScaleBehaviour(Fl_Widget* widget, void* userdata) {
         in->rclick_menu[3].set();
 
 }
+
+/********/
 
 
 // static void Copy_CB(Fl_Widget*, void *userdata) {
@@ -451,10 +461,10 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
     }
     //Calculates step to secondTag
     step = (float) w() / view_width ;
-    
+
     for (int i = 0; i < nvalue; i++) {
         this->insertsValues++;
-        
+
         //Used to animate secondTag
 //         if (this->insertsValues >= view_width) {
 //             this->secondTag += step ;
@@ -466,7 +476,7 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
         if (this->insertsValues > view_width) {
             this->insertsValues = view_width;
             insertInTail(value[i]);//minus sign is necessary to plot a correct graph
-            
+
             //Used to animate secondTag
             this->secondTag += step ;
             if (this->secondTag >= w() / (float)((view_width / this->trace_min))) {
@@ -488,7 +498,7 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue) {
         }
         /******/
 
-        
+
     }
 
 //     cout << "Max Value:" << fabs(this->vievedMaxValue) << endl;
@@ -517,6 +527,8 @@ void PlotxyFLTK::insertValueToPlot(float value) {
         if (this->secondTag >= w() / (float)((view_width / this->trace_min))) {
             this->secondTag = 0.0;
             time++;
+            this->simulationTime = second_clock::local_time();
+            cout << "Time:" << this->simulationTime.time_of_day().seconds() << endl;
         }
     }
 
@@ -548,6 +560,7 @@ void PlotxyFLTK::insertValueToPlot(float value) {
     this->redraw();
 }
 
+/**** PRIVATE FUNCTION ****/
 void PlotxyFLTK::insertInTail(float element) {
     this->shift_vector_left(element);
     this->view[insertsValues-1] = element;
@@ -561,7 +574,9 @@ void PlotxyFLTK::shift_vector_left(float element) {
     }
     this->view[i-1] = 0.0;
 }
+/**** END PRIVATE FUNCTION ****/
 
+/**** GET FUNCTION ****/
 int PlotxyFLTK::getTranslateYValue() {
     return this->translate_y;
 }
@@ -589,10 +604,14 @@ float PlotxyFLTK::getMinValue(float val, float min) {
         return min;
 }
 
+
 int PlotxyFLTK::getSimulationSeconds() {
     return this->time;
 }
 
+/**** END GET FUNCTION ****/
+
+/**** SET FUNCTION ****/
 void PlotxyFLTK::setAutoZoom(bool value) {
     //Enable/Disable Autoscale
     this->enableAutoScaleWhileGraph = value;
@@ -638,19 +657,34 @@ void PlotxyFLTK::setViedWidth(int value) {
         this->scale_factor_x = 32;
         this->view_width = this->trace_max;
     }
-
 }
+
+/**** END SET FUNCTION ****/
 
 void PlotxyFLTK::translateGraphY() {
     if ((this->vievedMinValue == 0) && (this->vievedMaxValue != 0))
-        this->translate_y = (y() + (h()-15));
+        this->translate_y = (y() + (h() - 15));
     else if ((this->vievedMinValue != 0) && (this->vievedMaxValue == 0))
         this->translate_y = (y());
     else
         this->translate_y = (y() + (h() / 2));
 }
 
-void PlotxyFLTK::plotLine() {
+void PlotxyFLTK::plotLine(float value) {
+    int i;
+
+    fl_color(FL_BLUE);
+    fl_line_style(FL_JOIN_BEVEL , 2);
+    fl_push_matrix();
+    fl_translate(translate_x, translate_y);
+    fl_scale(this->w() / this->scale_factor_x, this->h() / this->scale_factor_y);
+    fl_begin_line();
+
+    for (i = 0;i < this->view_width;i++)
+        fl_vertex((float) i / (float)this->trace_min, -value);
+
+    fl_end_line();
+    fl_pop_matrix();
     return ;
 }
 
@@ -754,5 +788,5 @@ void PlotxyFLTK::zoomYDecMouseWheel() {
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
 

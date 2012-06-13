@@ -66,7 +66,7 @@ class WinPlotXYFLTK: public Fl_Double_Window {
 
 
         //plot line into graph
-        void plotLine();
+        void plotLine(float value);
     protected:
 
 };

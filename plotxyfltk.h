@@ -28,10 +28,13 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Item.H>
 
+#include <boost/date_time.hpp>
+
 #define NVERTICAL 5
 
 
 using namespace std;
+using namespace boost::posix_time; 
 /*
  * Classe inerente alla parte grafica
  */
@@ -80,7 +83,7 @@ class PlotxyFLTK: public Fl_Box {
 
         bool enableAutoScaleWhileGraph;
 
-        //Many scale,translate parameters
+        // Scale,translate parameters
         float scale_factor_x;
         float scale_factor_y;
         int translate_value;
@@ -94,12 +97,17 @@ class PlotxyFLTK: public Fl_Box {
         float getMaxValue(float, float);
         float getMinValue(float, float);
 
+        //Axis Name
         string xAxis, yAxis;
 
         float intermidiateSecondsTag;
         float secondTag;//Use to move second tag (line to sign seconds)
         int time;
         Fl_Menu_Item *rclick_menu;
+        
+        ptime simulationTime;
+        
+        
 
 
     protected:
@@ -140,7 +148,7 @@ class PlotxyFLTK: public Fl_Box {
         void translateYUp();
 
         //plot line into graph
-        void plotLine();
+        void plotLine(float value);
 
 
 };

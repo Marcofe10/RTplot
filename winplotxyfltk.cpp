@@ -51,7 +51,7 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Doub
 
     this->checkButtonAutoScale = new Fl_Check_Button(ww + 2, 190, 110, 20, "Auto Zoom");
 
-    this->valueOutputTimeSimulations = new Fl_Value_Output(ww + 2, 300, 110, 20, "Auto Zoom");
+    this->valueOutputTimeSimulations = new Fl_Value_Output(ww + 2, 290, 110, 20, "Auto Zoom");
 
     this->checkButtonFullScreen = new Fl_Check_Button(ww + 2, 330, 110, 20, "FullScreen");
 
@@ -87,6 +87,8 @@ void WinPlotXYFLTK::draw() {
     this->valueOutputZoomX->value(this->plot->getZoomXValue());
     this->valueOutputZoomY->value(this->plot->getZoomYValue());
     this->valueOutputTranslateY->value(this->plot->getTranslateYValue());
+    
+    this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds());
 //     this->plot->redraw();
      Fl_Window::draw();
 }
@@ -98,17 +100,24 @@ void WinPlotXYFLTK::insertValueToPlot(float value) {
     this->valueOutputZoomX->value(this->plot->getZoomXValue());
     this->valueOutputZoomY->value(this->plot->getZoomYValue());
     this->valueOutputTranslateY->value(this->plot->getTranslateYValue());
+    this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds());
 }
 
 int WinPlotXYFLTK::insertValuesToPlot(float* value, int nvalue) {
     int rit;
     rit=this->plot->insertValuesToPlot(value, nvalue);
+    
+    this->valueOutputZoomX->value(this->plot->getZoomXValue());
+    this->valueOutputZoomY->value(this->plot->getZoomYValue());
+    this->valueOutputTranslateY->value(this->plot->getTranslateYValue());
+    this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds());
+    
     this->plot->redraw();
     return rit;
 }
 
-void WinPlotXYFLTK::plotLine() {
-    this->plot->plotLine();
+void WinPlotXYFLTK::plotLine(float value) {
+    this->plot->plotLine(value);
 }
 
 void WinPlotXYFLTK::setXAxis(char* name) {
