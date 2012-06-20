@@ -276,25 +276,25 @@ int PlotxyFLTK::handle(int e) {
 void PlotxyFLTK::drawCoordsAndOthers() {
     // Coordinates as a string
     char s[5][80];
-    char pres[80];
-    char tag[80];
-    char max[10];
-    char min[10];
+//     char inserts_values[80];
+//     char tag[80];
+//     char max[10];
+//     char min[10];
     int i;
 
     sprintf(s[0], "x:%d y:%d", (int)Fl::event_x(), (int)Fl::event_y());
-//     sprintf(pres, "Pres:%d", this->insertsValues);
 //     sprintf(tag, "Pres:%.4f", this->secondTag);
-    sprintf(s[1], "Max:%.4f", this->vievedMaxValue);
-    sprintf(s[2], "Min:%.4f", this->vievedMinValue);
+    sprintf(s[1], "Max:%.4f", this->vievedMaxValue);//Corresponds to max value
+    sprintf(s[2], "Min:%.4f", this->vievedMinValue);//Corresponds to min value
+    sprintf(s[3], "Pres:%d", this->insertsValues);//Corresponds to insertsValues
 
     fl_color(FL_WHITE);
     fl_font(FL_HELVETICA, 9);
-    for (i = 0;i < 3;i++) {
+    for (i = 0;i < 4;i++) {
         fl_draw(s[i], this->w() - 70, 15 + (11*i));
     }
 //     fl_draw(s, this->W - 70, 15);
-//     fl_draw(pres, this->W - 70, 26);
+//     fl_draw(inserts_values, this->w() - 70, 15 + (11*i));
 //     fl_draw(tag, this->W - 70, 37);
 //     fl_draw(max, this->W - 70, 48);
 //     fl_draw(min, this->W - 70, 59);
@@ -367,6 +367,7 @@ void PlotxyFLTK::draw() {
 //     }
 //     fl_draw("val", 100, ((ht / this->scale_factor_y)));
 
+//*******DATA PLOTTING
     fl_color(FL_WHITE);
     fl_line_style(FL_JOIN_BEVEL, 1);
 
@@ -376,7 +377,7 @@ void PlotxyFLTK::draw() {
 
     fl_begin_line();
 //     fl_begin_points();
-
+    
     for (i = 0; i < insertsValues; i++) {
         fl_vertex(((float)i / (float)this->trace_min), -view[i]);
         fl_color(FL_GREEN);
@@ -426,7 +427,7 @@ void PlotxyFLTK::draw() {
 
 
     //Plot horizontal axis (divide plot into ten parts)
-    stepf = (fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) / 10;
+    stepf = (fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) / (10);
     for (incf = this->vievedMinValue;incf < 0 ;incf += stepf) {
         fl_begin_line();
         for (j = 0;j < this->view_width;j++) {

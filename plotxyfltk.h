@@ -29,6 +29,7 @@
 #include <FL/Fl_Menu_Item.H>
 
 #include <boost/date_time.hpp>
+#include <boost/circular_buffer.hpp>
 
 #define NVERTICAL 5
 
@@ -111,6 +112,8 @@ class PlotxyFLTK: public Fl_Box {
         //Used to plot line into graph
         bool plotLineInGraph;
         float plotLineInGraphValue;
+        
+        boost::circular_buffer<float> *dataCB;
 
 
 
