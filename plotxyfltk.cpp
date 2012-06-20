@@ -27,6 +27,7 @@
 #include <FL/x.H>
 
 #include <boost/date_time.hpp>
+#include <boost/circular_buffer.hpp>
 
 #include <cmath>
 #include <iostream>
@@ -79,6 +80,8 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
     this->plotLineInGraph = false;
     this->plotLineInGraphValue = 0;
 
+    this->dataCB = new boost::circular_buffer<float>(this->trace_max);
+
 
 //     //FIXME don't show Zoom+ and Zoom-
 //     //Popup menu option list
@@ -94,7 +97,7 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
 
 PlotxyFLTK::~PlotxyFLTK() {
     delete [] this->trace;
-    delete [] this->view;
+//     delete [] this->view;
 }
 
 /**** STATIC FUNCTION ****/
@@ -377,10 +380,24 @@ void PlotxyFLTK::draw() {
 
     fl_begin_line();
 //     fl_begin_points();
-    
-    for (i = 0; i < insertsValues; i++) {
-        fl_vertex(((float)i / (float)this->trace_min), -view[i]);
-        fl_color(FL_GREEN);
+
+    if (this->insertsValues < this->view_width) {
+//         cout<<"this->insertsValues < this->view_width"<<endl;
+        for (i = 0; i < insertsValues; i++) {
+            //         fl_vertex(((float)i / (float)this->trace_min), -view[i]);
+            fl_vertex(((float)i / (float)this->trace_min), -dataCB->at(i));
+            fl_color(FL_GREEN);
+        }
+    } else {
+//         cout<<"this->insertsValues > this->view_width"<<endl;
+//         cout<<"this->insertsValues"<<this->insertsValues<<endl;
+//         cout<<"this->view_width"<<this->view_width<<endl;
+        for (i = 0, j = (this->insertsValues - this->view_width); j < this->insertsValues; j++, i++) {
+            //         fl_vertex(((float)i / (float)this->trace_min), -view[i]);
+            fl_vertex(((float)i / (float)this->trace_min), -dataCB->at(j));
+            fl_color(FL_GREEN);
+        }
+
     }
     fl_end_line();
 //     fl_end_points();
@@ -430,17 +447,21 @@ void PlotxyFLTK::draw() {
     stepf = (fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) / (10);
     for (incf = this->vievedMinValue;incf < 0 ;incf += stepf) {
         fl_begin_line();
+
         for (j = 0;j < this->view_width;j++) {
             fl_vertex(((float)j / (float)this->trace_min), -incf);
         }
+
         fl_end_line();
     }
 
     for (incf = 0;incf < (this->vievedMaxValue) + stepf;incf += stepf) {
         fl_begin_line();
+
         for (j = 0;j < this->view_width;j++) {
             fl_vertex(((float)j / (float)this->trace_min), -incf);
         }
+
         fl_end_line();
     }
     fl_pop_matrix();
@@ -485,9 +506,9 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue, int samplePerSecond
     if (nvalue > trace_max)
         return -1;
 
-    if (view == NULL) {
-        view = new float[trace_max];
-    }
+//     if (view == NULL) {
+//         view = new float[trace_max];
+//     }
 //     this->setTraceMin(trace_min);
 //     cout << "this->trace_min" << this->trace_min << endl;
     //Calculates step to secondTag
@@ -495,7 +516,10 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue, int samplePerSecond
     step = (float) w() / view_width ;
 
     for (int i = 0; i < nvalue; i++) {
-        this->insertsValues++;
+        if (this->insertsValues < this->trace_max)
+            this->insertsValues++;
+        else
+            this->insertsValues = this->trace_max;
 
         //Used to animate secondTag
 //         if (this->insertsValues >= view_width) {
@@ -505,9 +529,12 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue, int samplePerSecond
 //                 time++;
 //             }
 //         }
+        dataCB->push_back(value[i]);
+
         if (this->insertsValues > view_width) {
-            this->insertsValues = view_width;
-            insertInTail(value[i]);//minus sign is necessary to plot a correct graph
+//             this->insertsValues = view_width;
+            //insertInTail(value[i]);//minus sign is necessary to plot a correct graph
+
 
             //Used to animate secondTag
             this->secondTag += step ;
@@ -515,9 +542,9 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue, int samplePerSecond
                 this->secondTag = 0.0;
                 time++;
             }
-        } else {
+        } /*else {
             view[this->insertsValues] = value[i];
-        }
+        }*/
 
         //view[i] = value[i]; //minus sign is necessary to plot a correct graph
         this->vievedMaxValue = getMaxValue(value[i], this->vievedMaxValue);
@@ -544,27 +571,19 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue, int samplePerSecond
 void PlotxyFLTK::insertValueToPlot(float value) {
     float valore = value;
     float step;
-    if (view == NULL) {
-//         cout << "Allow view" << endl;
-        view = new float[trace_max];
-    }
+//     if (view == NULL) {
+// //         cout << "Allow view" << endl;
+//         view = new float[trace_max];
+//     }
 
-    this->insertsValues++;
+    if (this->insertsValues < this->trace_max)
+        this->insertsValues++;
+    else
+        this->insertsValues = this->trace_max;
 
     step = (float) w() / view_width ;//used from secondTag
 
-    //Used to animate secondTag
-//     if (this->insertsValues >= view_width) {
-//
-//     }
-
-    //Vertical line like to break view_width into NVERTICAL quadranti
-//     if (this->insertsValues >= view_width) {
-//         this->intermidiateSecondsTag += step ;
-//         if (this->intermidiateSecondsTag > (w() / (NVERTICAL*((view_width / this->trace_min))))) {
-//             this->intermidiateSecondsTag = 0.0;
-//         }
-//     }
+    dataCB->push_back(valore);
 
     if (insertsValues > view_width) {
         //Used to animate secondTag
@@ -577,11 +596,11 @@ void PlotxyFLTK::insertValueToPlot(float value) {
         }
         //end secondTag
 
-        this->insertsValues = view_width;
-        insertInTail(valore);//minus sign is necessary to plot a correct graph
-    } else {
+//         this->insertsValues = view_width;
+        //insertInTail(valore);//minus sign is necessary to plot a correct graph
+    } /*else {
         view[insertsValues-1] = valore;
-    }
+    }*/
 
     this->vievedMaxValue = getMaxValue(valore, this->vievedMaxValue);
     this->vievedMinValue = getMinValue(valore, this->vievedMinValue);
@@ -814,5 +833,6 @@ void PlotxyFLTK::zoomYDecMouseWheel() {
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+
 
