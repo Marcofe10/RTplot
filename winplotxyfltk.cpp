@@ -97,8 +97,8 @@ void WinPlotXYFLTK::draw() {
 }
 
 
-void WinPlotXYFLTK::insertValueToPlot(float value) {
-    this->plot->insertValueToPlot(value);
+void WinPlotXYFLTK::insertValueToPlot(float value, int samplePerSecond) {
+    this->plot->insertValueToPlot(value,samplePerSecond);
 
     this->valueOutputZoomX->value(this->plot->getZoomXValue());
     this->valueOutputZoomY->value(this->plot->getZoomYValue());
@@ -170,7 +170,7 @@ void WinPlotXYFLTK::setTraceMin(int value) {
 /**** END SET FUNCTION ****/
 
 int WinPlotXYFLTK::getSimulationSeconds() {
-    this->plot->getSimulationSeconds();
+    return this->plot->getSimulationSeconds();
 }
 
 

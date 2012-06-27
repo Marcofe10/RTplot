@@ -31,7 +31,7 @@
 #include <boost/date_time.hpp>
 #include <boost/circular_buffer.hpp>
 
-#define NVERTICAL 5
+#define NVERTICAL 10
 
 
 using namespace std;
@@ -104,15 +104,17 @@ class PlotxyFLTK: public Fl_Box {
         float intermidiateSecondsTag;
         float secondTag;//Use to move second tag (line to sign seconds)
         int samplePerSecond;//Sample per second. Use to plot secondtag in relationship of view_width
-        int time;
         Fl_Menu_Item *rclick_menu;
+
+        int time;
+        int residueTime;
 
         ptime simulationTime;
 
         //Used to plot line into graph
         bool plotLineInGraph;
         float plotLineInGraphValue;
-        
+
         boost::circular_buffer<float> *dataCB;
 
 
@@ -127,8 +129,8 @@ class PlotxyFLTK: public Fl_Box {
     public:
         PlotxyFLTK(int xp, int yp, int wp, int hp, const char *lp = 0);
         ~PlotxyFLTK();
-        int insertValuesToPlot(float *value, int nvalue,int samplePerSecond=512);
-        void insertValueToPlot(float value);
+        int insertValuesToPlot(float *value, int nvalue, int samplePerSecond = 512);
+        void insertValueToPlot(float value, int samplePerSecond=512);
 
 
         int getZoomXValue();
@@ -160,5 +162,5 @@ class PlotxyFLTK: public Fl_Box {
 
 
 };
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
 #endif

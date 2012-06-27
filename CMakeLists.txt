@@ -15,6 +15,12 @@ add_executable(demowinplotxyfltk demowinplotxyfltk.cpp winplotxyfltk.cpp plotxyf
 target_link_libraries(demoplotxyfltk ${FLTK_LIBRARIES})
 target_link_libraries(demowinplotxyfltk ${FLTK_LIBRARIES})
 
+# Compiler flags
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "-O2")        ## Optimize
+    set(CMAKE_EXE_LINKER_FLAGS "-g")  ## Strip binary
+endif()
+
 
 SET(HDRS plotxyfltk.h winplotxyfltk.h )
 SET(SRC plotxyfltk.cpp winplotxyfltk.cpp )

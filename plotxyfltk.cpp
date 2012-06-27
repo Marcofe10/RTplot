@@ -74,6 +74,7 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
 
     this->secondTag = 0.0;
     this->time = 0;
+    this->residueTime = 0;
 
     this->simulationTime = second_clock::local_time();
 
@@ -314,6 +315,8 @@ void PlotxyFLTK::draw() {
     float incf, stepf;
     float xf, yf;
     char text[20];
+    float tempx, tempy;
+    float temp;
 
     if (this->enableAutoScaleWhileGraph) {
         //Recalculate scale_factor_y
@@ -347,7 +350,7 @@ void PlotxyFLTK::draw() {
 
     /***Second tag***/
     fl_color(FL_RED);
-    fl_font(FL_HELVETICA, 10);
+    fl_font(FL_HELVETICA, 7);
     fl_line_style(FL_JOIN_BEVEL, 3);
 //     for (j = 1;j <= (this->view_width / this->trace_min);j++) {
 //         fl_line(((wd*j) / (this->view_width / this->trace_min)) - this->secondTag , (this->translate_y) - 5 , (((wd*j) / (this->view_width / this->trace_min))  - this->secondTag), (this->translate_y) + 5);
@@ -403,7 +406,7 @@ void PlotxyFLTK::draw() {
 //     fl_end_points();
     fl_pop_matrix();
 
-    /***Plot max value and min value***/
+    /***Plot max value and min value with a little red line***/
     fl_color(FL_RED);
     fl_line_style(FL_JOIN_BEVEL, 2);
 
@@ -418,7 +421,6 @@ void PlotxyFLTK::draw() {
     }
     fl_end_line();
     fl_pop_matrix();
-
     /**/
 
     /*Plot min value*/
@@ -430,41 +432,74 @@ void PlotxyFLTK::draw() {
         fl_vertex(((float)i / (float)this->trace_min), -this->vievedMinValue);
     }
     fl_end_line();
+    fl_pop_matrix();
+    /**/
 
+    /*Write text for min,max*/
+    fl_push_matrix();
+    fl_translate(translate_x, translate_y);
+    fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
+    fl_color(FL_WHITE);
+    fl_font(FL_HELVETICA_BOLD, 10);
+
+    //Max value
+    sprintf(text, "%f", this->vievedMaxValue);
+    fl_draw(text, 3 + fl_transform_x(0, -this->vievedMaxValue), fl_transform_y(0, -this->vievedMaxValue));
+
+    //Min value
+    sprintf(text, "%f", this->vievedMinValue);
+    fl_draw(text, 3 + fl_transform_x(0, -this->vievedMinValue), 10 + fl_transform_y(0, -this->vievedMinValue));
     fl_pop_matrix();
     /**/
 
     /*** ***/
 
     fl_color(FL_WHITE);
+    fl_font(FL_HELVETICA, 9);
     fl_line_style(FL_DOT , 1);
+
     fl_push_matrix();
     fl_translate(translate_x, translate_y);
     fl_scale(wd / this->scale_factor_x, ht / this->scale_factor_y);
 
 
-    //Plot horizontal axis (divide plot into ten parts)
-    stepf = (fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) / (10);
-    for (incf = this->vievedMinValue;incf < 0 ;incf += stepf) {
+    /*Plot horizontal axis (divide plot into ten parts)*/
+    stepf = (fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) / (NVERTICAL);
+    //Negatives Values
+    for (i = 0, incf = this->vievedMinValue;incf < 0 ;i++, incf += stepf) {
         fl_begin_line();
-
         for (j = 0;j < this->view_width;j++) {
             fl_vertex(((float)j / (float)this->trace_min), -incf);
         }
-
         fl_end_line();
+
+        //Draw values of horizontal negative line
+         //Draw values of horizontal positive line
+        if ((incf > (this->vievedMinValue) && (incf < 0))) {
+            sprintf(text, "%f", incf);
+            fl_draw(text, 1 + fl_transform_x(0, -incf), fl_transform_y(0, -incf));
+        }
+//         sprintf(text, "%f", -temp);
+//         fl_draw(text, 1 + fl_transform_x(0, temp), fl_transform_y(0, temp));
     }
 
-    for (incf = 0;incf < (this->vievedMaxValue) + stepf;incf += stepf) {
+    //Positivies Values
+    for (i = 0, incf = 0;incf < (this->vievedMaxValue) + stepf;i++, incf += stepf) {
         fl_begin_line();
-
         for (j = 0;j < this->view_width;j++) {
             fl_vertex(((float)j / (float)this->trace_min), -incf);
         }
-
         fl_end_line();
+
+        //Draw values of horizontal positive line
+        if ((incf > 0) && (incf < (this->vievedMaxValue))) {
+            sprintf(text, "%f", incf);
+            fl_draw(text, 1 + fl_transform_x(0, -incf), fl_transform_y(0, -incf));
+        }
     }
+
     fl_pop_matrix();
+    /**/
 
     //Plot line into Graph at
     if (this->plotLineInGraph) {
@@ -476,11 +511,29 @@ void PlotxyFLTK::draw() {
         fl_begin_line();
 
         for (i = 0;i < this->view_width;i++)
-            fl_vertex((float) i / (float)this->trace_min, this->plotLineInGraphValue);
+            fl_vertex((float) i / (float)this->trace_min, -this->plotLineInGraphValue);
 
         fl_end_line();
+
+        fl_color(FL_WHITE);
+
+        //Plot value line
+        fl_font(FL_HELVETICA, 9);
+        sprintf(text, "%f", this->plotLineInGraphValue);
+//         cout << "Fl_transform>>> " << fl_transform_x(0, this->plotLineInGraphValue) << ":" << fl_transform_y(0, this->plotLineInGraphValue) << endl;
+//         cout << "Fl_transform_d>>> " << fl_transform_dx(0, this->plotLineInGraphValue) << ":" << fl_transform_dy(0, this->plotLineInGraphValue) << endl;
+        fl_draw(text, 1 + fl_transform_x(0, -this->plotLineInGraphValue), fl_transform_y(0, -this->plotLineInGraphValue));
         fl_pop_matrix();
     }
+
+//     cout <<"Fl_transform>>> "<< fl_transform_x(0, 300) << ":" << fl_transform_y(0, 300) << endl;
+//     cout <<"Fl_transform_d>>> "<< fl_transform_dx(0, 300) << ":" << fl_transform_dy(0, 300) << endl;
+
+
+    /*
+              tempx= fl_transform_x(0.7 , 0.7);
+          tempy= fl_transform_y(0.7 , 0.7);
+          cout <<" temp:"<<tempx<<" tempy:"<<tempy<<endl;Z*/
 
 //     stepf =(float) 128 / (this->view_width) ;
 //     cout << "stepf:" << stepf << endl;
@@ -492,10 +545,6 @@ void PlotxyFLTK::draw() {
 //         }
 //         fl_end_line();
 //     }
-
-
-
-
 
     drawCoordsAndOthers();
 } /* end of draw() method */
@@ -531,7 +580,7 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue, int samplePerSecond
 //         }
         dataCB->push_back(value[i]);
 
-        if (this->insertsValues > view_width) {
+        if (this->insertsValues >= view_width) {
 //             this->insertsValues = view_width;
             //insertInTail(value[i]);//minus sign is necessary to plot a correct graph
 
@@ -540,7 +589,14 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue, int samplePerSecond
             this->secondTag += step ;
             if (this->secondTag >= w() / (float)((view_width / this->samplePerSecond))) {
                 this->secondTag = 0.0;
-                time++;
+                //time++;
+            }
+
+            //Increase time
+            this->residueTime++;
+            if (this->residueTime == (samplePerSecond - 1)) {
+                this->time++;
+                this->residueTime = 0;
             }
         } /*else {
             view[this->insertsValues] = value[i];
@@ -568,29 +624,29 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue, int samplePerSecond
     return nvalue;
 }
 
-void PlotxyFLTK::insertValueToPlot(float value) {
-    float valore = value;
+void PlotxyFLTK::insertValueToPlot(float value, int samplePerSecond) {
     float step;
+
 //     if (view == NULL) {
 // //         cout << "Allow view" << endl;
 //         view = new float[trace_max];
 //     }
+
+    this->samplePerSecond = samplePerSecond;
+    step = (float) w() / view_width ;//used from secondTag
 
     if (this->insertsValues < this->trace_max)
         this->insertsValues++;
     else
         this->insertsValues = this->trace_max;
 
-    step = (float) w() / view_width ;//used from secondTag
+    dataCB->push_back(value);
 
-    dataCB->push_back(valore);
-
-    if (insertsValues > view_width) {
+    if (insertsValues >= view_width) {
         //Used to animate secondTag
         this->secondTag += step ;
         if (this->secondTag >= w() / (float)((view_width / this->samplePerSecond))) {
             this->secondTag = 0.0;
-            time++;
             this->simulationTime = second_clock::local_time();
             cout << "Time:" << this->simulationTime.time_of_day().seconds() << endl;
         }
@@ -602,8 +658,15 @@ void PlotxyFLTK::insertValueToPlot(float value) {
         view[insertsValues-1] = valore;
     }*/
 
-    this->vievedMaxValue = getMaxValue(valore, this->vievedMaxValue);
-    this->vievedMinValue = getMinValue(valore, this->vievedMinValue);
+    //Increase time
+    this->residueTime++;
+    if (this->residueTime == (samplePerSecond - 1)) {
+        this->residueTime = 0;
+        this->time++;
+    }
+
+    this->vievedMaxValue = getMaxValue(value, this->vievedMaxValue);
+    this->vievedMinValue = getMinValue(value, this->vievedMinValue);
 
     /***autoZoom***/
     if (this->enableAutoScaleWhileGraph) {
@@ -729,7 +792,7 @@ void PlotxyFLTK::translateGraphY() {
 void PlotxyFLTK::plotLine(float value) {
 
     this->plotLineInGraph = true;
-    this->plotLineInGraphValue = -value;
+    this->plotLineInGraphValue = value;
     return ;
 }
 
@@ -749,7 +812,7 @@ void PlotxyFLTK::zoomXInc() {
 
 void PlotxyFLTK::zoomXDec() {
     this->scale_factor_x *= 2;
-    if (this->scale_factor_x >= 32) {
+    if (this->scale_factor_x > 32) {
         this->scale_factor_x = 32;
     }
 
@@ -833,6 +896,6 @@ void PlotxyFLTK::zoomYDecMouseWheel() {
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
 
 

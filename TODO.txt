@@ -1,6 +1,6 @@
-****SVILUPPI FUTURI****
+*** SVILUPPI FUTURI ***
 
-+ Plottare il valore max e min nelle coordinate
+
 
 + Possibilità di ottere il valore corrispondente al grafico passando col mouse di sopra
 + nello zummare la grigla e'sempre divisa in N parti(Non che si riduce a N..4,2,1..), ma il valore numerico plottato di adegua al nuovo zoom.
@@ -9,9 +9,9 @@
 
 
 
-****BUG****
+*** BUG ***
 
-+ Problema Zoom avanti e poi indietro (Vengono tagliati pezzi del grafico con questa azione)
+
 + In Winplotxy... se zommo col mouse non mi cambia i valori del valueoutput.
 
 
@@ -19,5 +19,6 @@
 *** O K ***
 + Possibilità di ottenere FullScreen(ok 04/06)
 + Eliminare quello sfarfallio nel plot(usato Fl_Double_Window 070612.1905)
-
 + Plottare griglia(Posso migliorare)
++ Problema Zoom avanti e poi indietro (Vengono tagliati pezzi del grafico con questa azione)(OK RISOLTO 200612_2134)
++ Plottare il valore max e min nelle coordinate ( ok 210612_1230)
