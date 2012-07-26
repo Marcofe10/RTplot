@@ -11,7 +11,7 @@
 
 *** BUG ***
 
-
++Asse dei tempi con il tempo visualualizzato è sbagliato.Correggere
 + In Winplotxy... se zommo col mouse non mi cambia i valori del valueoutput.
 
 
