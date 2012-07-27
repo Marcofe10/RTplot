@@ -36,6 +36,12 @@
 
 using namespace std;
 using namespace boost::posix_time;
+
+typedef struct _data_element{
+    float value;
+    float time;
+}data_element;
+
 /*
  * Classe inerente alla parte grafica
  */
@@ -103,10 +109,11 @@ class PlotxyFLTK: public Fl_Box {
 
         float intermidiateSecondsTag;
         float secondTag;//Use to move second tag (line to sign seconds)
+        int incTagAxesValue;//Used to change range of X axes
         int samplePerSecond;//Sample per second. Use to plot secondtag in relationship of view_width
         Fl_Menu_Item *rclick_menu;
 
-        int time;
+        int time;//Simulation time calculated by sample 
         int residueTime;
 
         ptime simulationTime;
@@ -115,7 +122,10 @@ class PlotxyFLTK: public Fl_Box {
         bool plotLineInGraph;
         float plotLineInGraphValue;
 
-        boost::circular_buffer<float> *dataCB;
+        boost::circular_buffer<data_element> *dataCB;
+        
+        //Common operation in insertValues e insertValue
+        int commonInsertValue(float value,float step);
 
 
 
