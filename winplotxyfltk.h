@@ -62,9 +62,11 @@ class WinPlotXYFLTK: public Fl_Double_Window {
         void setAutoZoom(bool value);
         void setViedWidth(int value);
         void setTraceMin(int value);
+        void setSampleTime(int sampleTime);
         
         
-        int getSimulationSeconds();
+        float getSimulationSeconds();
+        int getSampleTime();
 
 
         //plot line into graph

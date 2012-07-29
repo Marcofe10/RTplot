@@ -73,8 +73,8 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
     this->vievedMinValue = 0;
 
     this->secondTag = 0.0;
-    this->incTagAxesValue = 0;
-    this->time = 0;
+//     this->incTagAxesValue = 0;
+    this->time = 0.0;
     this->residueTime = 0;
 
     this->simulationTime = second_clock::local_time();
@@ -292,10 +292,11 @@ void PlotxyFLTK::drawCoordsAndOthers() {
     sprintf(s[1], "Max:%.4f", this->vievedMaxValue);//Corresponds to max value
     sprintf(s[2], "Min:%.4f", this->vievedMinValue);//Corresponds to min value
     sprintf(s[3], "Pres:%d", this->insertsValues);//Corresponds to insertsValues
+    sprintf(s[4], "SampSec:%d", this->samplePerSecond);//Corresponds to insertsValues
 
     fl_color(FL_WHITE);
     fl_font(FL_HELVETICA, 9);
-    for (i = 0;i < 4;i++) {
+    for (i = 0;i < 5;i++) {
         fl_draw(s[i], this->w() - 70, 15 + (11*i));
     }
 //     fl_draw(s, this->W - 70, 15);
@@ -313,13 +314,14 @@ void PlotxyFLTK::draw() {
     int ht = h();
     int xo = x();
     int yo = y();
-    int j, i;
+    int j, i, k;
     float incf, stepf;
     float xf, yf;
     char text[20];
     float tempx, tempy;
     float temp;
-    int offsettime=0;
+    int offsettime = 1;
+    int plotTextEvery = 0;
 
     if (this->enableAutoScaleWhileGraph) {
         //Recalculate scale_factor_y
@@ -327,7 +329,6 @@ void PlotxyFLTK::draw() {
 
         //Translate it in correct position
         this->translateGraphY();
-
     }
 
     fl_color(FL_BLACK);
@@ -350,40 +351,6 @@ void PlotxyFLTK::draw() {
     fl_draw(this->yAxis.c_str(), 5, 15);
     /***********************/
 
-
-    /***Second tag***/
-//     fl_color(FL_RED);
-//     fl_font(FL_HELVETICA, 7);
-//     fl_line_style(FL_JOIN_BEVEL, 3);
-//     for (j = 1.0, i = 0;j <= (float)(this->view_width / this->samplePerSecond);j++, i++) {
-//
-//         //Plot text
-//         plotTextEvery = ((this->view_width / this->samplePerSecond) / 32);
-//         //cout <<"plotTextEvery:"<<plotTextEvery<<" view_width:"<<this->view_width<<endl;
-//
-//         if (plotTextEvery) {
-//             if (i == plotTextEvery) {
-//                 fl_line(((wd*j) / (float)(this->view_width / this->samplePerSecond)) - this->secondTag , (this->translate_y) - 5 , (((wd*j) / (this->view_width / this->samplePerSecond))  - this->secondTag), (this->translate_y) + 5);
-//                 sprintf(text, "%d", j + this->incTagAxesValue);
-//                 fl_draw(text, (((wd*j) / (this->view_width / this->samplePerSecond)) - this->secondTag), (this->translate_y) + 13);
-//                 i = 0;
-//             }
-//         } else {
-//             fl_line(((wd*j) / (float)(this->view_width / this->samplePerSecond)) - this->secondTag , (this->translate_y) - 5 , (((wd*j) / (this->view_width / this->samplePerSecond))  - this->secondTag), (this->translate_y) + 5);
-//             sprintf(text, "%d", j + this->incTagAxesValue);
-//             fl_draw(text, (((wd*j) / (this->view_width / this->samplePerSecond)) - this->secondTag), (this->translate_y) + 13);
-//         }
-//     }
-
-    /*** ***/
-
-    //     fl_line_style(FL_DOT, 1);
-//     fl_color(FL_WHITE);
-//     for (j = 1;j <= (NVERTICAL*(view_width / this->trace_min));j++) {
-//         fl_line(((wd*j) / (NVERTICAL*(view_width / this->trace_min))) - this->intermidiateSecondsTag , 0 , (((wd*j) / (NVERTICAL*(view_width / this->trace_min)))  - this->intermidiateSecondsTag), ht);
-//     }
-//     fl_draw("val", 100, ((ht / this->scale_factor_y)));
-
     /***DATA PLOTTING***/
     fl_color(FL_WHITE);
     fl_line_style(FL_JOIN_BEVEL, 1);
@@ -396,52 +363,56 @@ void PlotxyFLTK::draw() {
 //     fl_begin_points();
 
     if (this->insertsValues < this->view_width) {
-//         cout<<"this->insertsValues < this->view_width"<<endl;
         for (i = 0; i < insertsValues; i++) {
             //         fl_vertex(((float)i / (float)this->trace_min), -view[i]);
             fl_vertex(((float)i / (float)this->trace_min), -dataCB->at(i).value);
             fl_color(FL_GREEN);
         }
     } else {
-//         cout<<"this->insertsValues > this->view_width"<<endl;
-//         cout<<"this->insertsValues"<<this->insertsValues<<endl;
-//         cout<<"this->view_width"<<this->view_width<<endl;
         for (i = 0, j = (this->insertsValues - this->view_width); j < this->insertsValues; j++, i++) {
             //         fl_vertex(((float)i / (float)this->trace_min), -view[i]);
             fl_vertex(((float)i / (float)this->trace_min), -dataCB->at(j).value);
             fl_color(FL_GREEN);
         }
-
     }
     fl_end_line();
+
+
+    plotTextEvery = ((this->view_width / this->samplePerSecond) / 32);
+    if (!plotTextEvery)
+        plotTextEvery = 1;
 
     //Tag about X axes
     fl_color(FL_RED);
     fl_line_style(FL_JOIN_BEVEL, 3);
     fl_font(FL_HELVETICA_BOLD, 8);
     if (this->insertsValues < this->view_width) {
-        for (i = 0; i < insertsValues; i++) {
-            if (!(i % this->samplePerSecond) && (i != 0)) {
+        for (i = 0, k = 0; i < insertsValues; i++, k++) {
+            if (!(i % (this->samplePerSecond*plotTextEvery)) && (i != 0)) {
                 fl_begin_line();
                 fl_vertex(((float)i / (float)this->trace_min), (this->scale_factor_y / 70));
                 fl_vertex(((float)i / (float)this->trace_min), -(this->scale_factor_y / 70));
                 fl_end_line();
-                sprintf(text, "%d",offsettime);
-                fl_draw(text, 3 + fl_transform_x(((float)i / (float)this->trace_min), 0), fl_transform_y(((float)i / (float)this->trace_min),0));
-                offsettime++;
+
+                //sprintf(text, "%d", offsettime);
+                sprintf(text, "%d", (int)this->dataCB->at(i - 1).time);
+                fl_draw(text, 3 + fl_transform_x(((float)i / (float)this->trace_min), 0), -5 + fl_transform_y(((float)i / (float)this->trace_min), 0));
+                k = 0;
             }
-            offsettime=0;
         }
     } else {
-        for (i = 0, j = (this->insertsValues - this->view_width); j < this->insertsValues; j++, i++) {
-            if (!(j % this->samplePerSecond)) {
+        for (i = 0, k = 0, j = (this->insertsValues - this->view_width); j < this->insertsValues; j++, i++, k++) {
+            if (!(j % (this->samplePerSecond*plotTextEvery)) && (i != 0)) {
                 fl_begin_line();
                 fl_vertex(((float)i / (float)this->trace_min), (this->scale_factor_y / 70));
                 fl_vertex(((float)i / (float)this->trace_min), -(this->scale_factor_y / 70));
                 fl_end_line();
-                sprintf(text, "%d",this->time+offsettime);
-                fl_draw(text, 3 + fl_transform_x(((float)i / (float)this->trace_min), 0), fl_transform_y(((float)i / (float)this->trace_min),0));
-                offsettime++;
+
+                //sprintf(text, "%d",(int) this->time + offsettime - (trace_min / this->samplePerSecond));
+                sprintf(text, "%d", (int) this->dataCB->at(j - 1).time);
+//                 cout <<(j % this->samplePerSecond)<<")Time:" << this->time << " Offesettime:" << offsettime << " (trace_min / this->samplePerSecond):" << (trace_min / this->samplePerSecond)<< endl;
+                fl_draw(text, 3 + fl_transform_x(((float)i / (float)this->trace_min), 0), -5 + fl_transform_y(((float)i / (float)this->trace_min), 0));
+                k = 0;
             }
         }
     }
@@ -608,6 +579,9 @@ int PlotxyFLTK::insertValuesToPlot(float* value, int nvalue, int samplePerSecond
 
     //Calculates step to secondTag
     this->samplePerSecond = samplePerSecond;
+    if (this->sampleTime != 0)
+        this->samplePerSecond = this->sampleTime;
+
     step = (float) w() / this->view_width ;
 
     for (int i = 0; i < nvalue; i++) {
@@ -627,6 +601,9 @@ void PlotxyFLTK::insertValueToPlot(float value, int samplePerSecond) {
 //     }
 
     this->samplePerSecond = samplePerSecond;
+    if (this->sampleTime != 0)
+        this->samplePerSecond = this->sampleTime;
+
     step = (float) w() / view_width ;//used from secondTag
 
     this->commonInsertValue(value, step);
@@ -638,32 +615,38 @@ void PlotxyFLTK::insertValueToPlot(float value, int samplePerSecond) {
 
 int PlotxyFLTK::commonInsertValue(float value, float step) {
     data_element prov;
-    prov.value = value;
+
+    //TODO Metti in tempo.
 
     //Calculates step to secondTag
     if (this->insertsValues < this->trace_max)
         this->insertsValues++;
     else
         this->insertsValues = this->trace_max;
+
+    prov.value = value;
+    prov.time = (float) insertsValues / samplePerSecond;
+    this->time = prov.time;
+
     dataCB->push_back(prov);
 
     if (this->insertsValues >= view_width) {
         //Used to animate secondTag
         this->secondTag += step ;
-        if (this->secondTag >= w() / (float)((view_width / this->samplePerSecond))) {
+        if (this->secondTag >= (w() / (float)((view_width / this->samplePerSecond)))) {
             this->secondTag = 0.0;
-            this->incTagAxesValue++;
+//             this->incTagAxesValue++;
             this->simulationTime = second_clock::local_time();
             cout << "Time:" << this->simulationTime.time_of_day().seconds() << endl;
         }
     }
 
-    //Increase time
-    this->residueTime++;
-    if (this->residueTime == (this->samplePerSecond - 1)) {
-        this->time++;
-        this->residueTime = 0;
-    }
+//     //Increase time
+//     this->residueTime++;
+//     if (this->residueTime == (this->samplePerSecond)) {
+//         this->time++;
+//         this->residueTime = 0;
+//     }
 
     this->vievedMaxValue = getMaxValue(value, this->vievedMaxValue);
     this->vievedMinValue = getMinValue(value, this->vievedMinValue);
@@ -722,9 +705,14 @@ float PlotxyFLTK::getMinValue(float val, float min) {
 }
 
 
-int PlotxyFLTK::getSimulationSeconds() {
+float PlotxyFLTK::getSimulationSeconds() {
     return this->time;
 }
+
+int PlotxyFLTK::getSampleTime() {
+    this->sampleTime;
+}
+
 
 /**** END GET FUNCTION ****/
 
@@ -776,6 +764,11 @@ void PlotxyFLTK::setViedWidth(int value) {
         this->view_width = this->trace_max;
     }
 }
+
+void PlotxyFLTK::setSampleTime(int sampleTime) {
+    this->sampleTime = sampleTime;
+}
+
 
 /**** END SET FUNCTION ****/
 
@@ -897,4 +890,4 @@ void PlotxyFLTK::zoomYDecMouseWheel() {
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;

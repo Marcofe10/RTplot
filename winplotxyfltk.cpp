@@ -98,7 +98,7 @@ void WinPlotXYFLTK::draw() {
 
 
 void WinPlotXYFLTK::insertValueToPlot(float value, int samplePerSecond) {
-    this->plot->insertValueToPlot(value,samplePerSecond);
+    this->plot->insertValueToPlot(value, samplePerSecond);
 
     this->valueOutputZoomX->value(this->plot->getZoomXValue());
     this->valueOutputZoomY->value(this->plot->getZoomYValue());
@@ -167,11 +167,23 @@ void WinPlotXYFLTK::setTraceMin(int value) {
     plot->setTraceMin(value);
 }
 
+void WinPlotXYFLTK::setSampleTime(int sampleTime) {
+    this->plot->setSampleTime(sampleTime);
+}
+
+
 /**** END SET FUNCTION ****/
 
-int WinPlotXYFLTK::getSimulationSeconds() {
+/**** GET FUNCTION ****/
+float WinPlotXYFLTK::getSimulationSeconds() {
     return this->plot->getSimulationSeconds();
 }
+int WinPlotXYFLTK::getSampleTime() {
+    return this->plot->getSampleTime();
+}
+
+
+/**** END GET FUNCTION ****/
 
 
 /* * * STATIC FUNCTION * * */
@@ -296,4 +308,4 @@ void WinPlotXYFLTK::fullScreen(Fl_Widget* widget, void* userdata) {
 /* * * E N D STATIC FUNCTION  * * */
 
 
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on; 
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;

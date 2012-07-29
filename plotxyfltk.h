@@ -109,11 +109,12 @@ class PlotxyFLTK: public Fl_Box {
 
         float intermidiateSecondsTag;
         float secondTag;//Use to move second tag (line to sign seconds)
-        int incTagAxesValue;//Used to change range of X axes
+//         int incTagAxesValue;//Used to change range of X axes
         int samplePerSecond;//Sample per second. Use to plot secondtag in relationship of view_width
+        int sampleTime;//Sample time (at the moment it's similar to samplePerSecond)
         Fl_Menu_Item *rclick_menu;
 
-        int time;//Simulation time calculated by sample 
+        float time;//Simulation time calculated by sample 
         int residueTime;
 
         ptime simulationTime;
@@ -146,7 +147,8 @@ class PlotxyFLTK: public Fl_Box {
         int getZoomXValue();
         int getZoomYValue();
         int getTranslateYValue();
-        int getSimulationSeconds();
+        float getSimulationSeconds();
+        int getSampleTime();
 
         void setAutoZoom(bool value);
         void setXAxis(char *name);
@@ -154,6 +156,7 @@ class PlotxyFLTK: public Fl_Box {
         void setTraceMin(int value);
         void setTraceMax(int value);
         void setViedWidth(int value);
+        void setSampleTime(int sampleTime);
 
 
         void zoomXDec();
@@ -172,5 +175,4 @@ class PlotxyFLTK: public Fl_Box {
 
 
 };
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
 #endif

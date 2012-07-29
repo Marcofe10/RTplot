@@ -33,9 +33,9 @@ int k;
 
 void update_scope(void *valori) {
     int num;
-    float *val = (float*)valori;
+    data_element *val = (data_element*)valori;
     
-    main_win->insertValueToPlot(val[k], 64);
+    main_win->insertValueToPlot(val[k].value, 64);
     k++;
     
 //     if (random() % 2)
@@ -63,9 +63,12 @@ void update_scope(void *valori) {
 
 int main(int argc, char **argv) {
     int i;
-    float valori[10*N];
+    //float valori[10*N];
+    data_element valori[10*N];
     float j;
     srand(time(NULL));
+    float value_time;
+    int sample_time=64;
 
 //     float *valori;
 //     valori= new float[512];
@@ -77,18 +80,22 @@ int main(int argc, char **argv) {
 //     main_win1 = new WinPlotXYFLTK(0, 0, 800, 600, "Scope Window");
 //     main_win1->show();
 
-
+    main_win->setSampleTime(sample_time);
+    value_time=1/64;
     for (i = 0; i < 10*N; i++) {
 
+        valori[i].time=value_time*i;
+        
         if (i > 10)
-            valori[i] = abs(sin((double)(i * 5 * 2 * M_PI / (double)N)));
+            valori[i].value = abs(sin((double)(i * 5 * 2 * M_PI / (double)N)));
         else
-            valori[i] = 0;
+            valori[i].value = 0;        
     }
+    
     cout << "Valori Generati:" << 10*N << endl;
     k = 0;
     cout << "K:" << k << endl;
-    k = main_win->insertValuesToPlot(valori, 10, 64);
+    //k = main_win->insertValuesToPlot(valori, 10, sample_time);
 
 
     cout << "K:" << k << endl;
