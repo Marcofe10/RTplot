@@ -1,21 +1,16 @@
 *** SVILUPPI FUTURI ***
 
 
-
++Il plot deve essere fatto sulla finestra di visualizzazione e non sui valori max trovati. Quindi deve essere fatta sui valori max e min visualizzati.
 + Possibilità di ottere il valore corrispondente al grafico passando col mouse di sopra
 + nello zummare la grigla e'sempre divisa in N parti(Non che si riduce a N..4,2,1..), ma il valore numerico plottato di adegua al nuovo zoom.
-
-+FORSE USARE OPENGL
 
 
 
 *** BUG ***
 
-+Asse dei tempi con il tempo visualualizzato è sbagliato.Correggere
+
 + In Winplotxy... se zommo col mouse non mi cambia i valori del valueoutput.
-
-+ La scala dei tempi non rispetti certe cose...mi sa che opterò per la soluzione relativa alla struttura con due record, uno per il valore del sample e l'altra per il valore temporale...Credo sia la scelta più azzeccata.. Matlab fa lo stesso.
-
 
 
 *** O K ***
@@ -24,3 +19,5 @@
 + Plottare griglia(Posso migliorare)
 + Problema Zoom avanti e poi indietro (Vengono tagliati pezzi del grafico con questa azione)(OK RISOLTO 200612_2134)
 + Plottare il valore max e min nelle coordinate ( ok 210612_1230)
++ La scala dei tempi non rispetti certe cose...mi sa che opterò per la soluzione relativa alla struttura con due record, uno per il valore del sample e l'altra per il valore temporale...Credo sia la scelta più azzeccata.. Matlab fa lo stesso (OK 290712_1531)
++Asse dei tempi con il tempo visualualizzato è sbagliato.Correggere (OK 290712_1531)

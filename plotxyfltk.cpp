@@ -30,6 +30,7 @@
 #include <boost/circular_buffer.hpp>
 
 #include <cmath>
+#include <math.h> 
 #include <iostream>
 #include "plotxyfltk.h"
 
@@ -281,10 +282,6 @@ int PlotxyFLTK::handle(int e) {
 void PlotxyFLTK::drawCoordsAndOthers() {
     // Coordinates as a string
     char s[5][80];
-//     char inserts_values[80];
-//     char tag[80];
-//     char max[10];
-//     char min[10];
     int i;
 
     sprintf(s[0], "x:%d y:%d", (int)Fl::event_x(), (int)Fl::event_y());
@@ -324,11 +321,7 @@ void PlotxyFLTK::draw() {
     int plotTextEvery = 0;
 
     if (this->enableAutoScaleWhileGraph) {
-        //Recalculate scale_factor_y
-        this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
-
-        //Translate it in correct position
-        this->translateGraphY();
+       this->scaleAndTranslateY();
     }
 
     fl_color(FL_BLACK);
@@ -616,8 +609,6 @@ void PlotxyFLTK::insertValueToPlot(float value, int samplePerSecond) {
 int PlotxyFLTK::commonInsertValue(float value, float step) {
     data_element prov;
 
-    //TODO Metti in tempo.
-
     //Calculates step to secondTag
     if (this->insertsValues < this->trace_max)
         this->insertsValues++;
@@ -648,13 +639,15 @@ int PlotxyFLTK::commonInsertValue(float value, float step) {
 //         this->residueTime = 0;
 //     }
 
-    this->vievedMaxValue = getMaxValue(value, this->vievedMaxValue);
-    this->vievedMinValue = getMinValue(value, this->vievedMinValue);
+    this->maxValue = findMaxValue(value, this->vievedMaxValue);
+    this->minValue = findMinValue(value, this->vievedMinValue);
+
+    //Gets min and max value from dataCB in a windows large view_width and put this values in this->vievedMaxValue and this->vievedMinValue
+    getMaxMinWindowValue();
 
     /***autoZoom***/
     if (this->enableAutoScaleWhileGraph) {
-        this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue));
-        this->translateGraphY();
+        scaleAndTranslateY();
     }
     /******/
 
@@ -669,10 +662,60 @@ void PlotxyFLTK::shift_vector_left(float element) {
     int i = 0;
     for (i = 1;i < insertsValues;i++) {
         this->view[i-1] = this->view[i];
-
     }
     this->view[i-1] = 0.0;
 }
+
+float PlotxyFLTK::findMaxValue(float val, float current_max) {
+    if (val > current_max)
+        return val;
+    else
+        return current_max;
+}
+
+float PlotxyFLTK::findMinValue(float val, float current_min) {
+    if (val < current_min)
+        return val;
+    else
+        return current_min;
+}
+
+void PlotxyFLTK::getMaxMinWindowValue() {
+    int i;
+    int lastElement = this->insertsValues - 1;
+    float min = 0, max = 0;
+
+//     cout << "lastElement:" << lastElement << endl;
+//     cout << "1max:" << max << " min:" << min << endl;
+
+    for (i = lastElement;(i > 0) && (i > (lastElement - this->view_width));i--) {
+//         cout << "i:" << i << endl;
+        if (dataCB->at(i).value > max)
+            max = dataCB->at(i).value;
+        else if (dataCB->at(i).value < min)
+            min = dataCB->at(i).value;
+    }
+
+    this->vievedMaxValue = max;
+    this->vievedMinValue = min;
+//     cout << "max:" << max << " min:" << min << endl;
+}
+
+void PlotxyFLTK::scaleAndTranslateY() {
+    int factor;
+    
+    factor = exp10(log10(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue))-1);
+    //calculate scale_factor_y
+    this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + factor;
+    
+    cout << "scale_factor_y:" << scale_factor_y << " this->vievedMaxValue:" << this->vievedMaxValue << endl;
+    
+    //Translate it in correct position
+    this->translateGraphY();
+}
+
+
+
 /**** END PRIVATE FUNCTION ****/
 
 
@@ -689,28 +732,20 @@ int PlotxyFLTK::getZoomYValue() {
     return this->scale_factor_y;
 }
 
-
-float PlotxyFLTK::getMaxValue(float val, float max) {
-    if (val > max)
-        return val;
-    else
-        return max;
-}
-
-float PlotxyFLTK::getMinValue(float val, float min) {
-    if (val < min)
-        return val;
-    else
-        return min;
-}
-
-
 float PlotxyFLTK::getSimulationSeconds() {
     return this->time;
 }
 
 int PlotxyFLTK::getSampleTime() {
-    this->sampleTime;
+    return this->sampleTime;
+}
+
+float PlotxyFLTK::getMaxValue() {
+    return this->maxValue;
+}
+
+float PlotxyFLTK::getMinValue() {
+    return this->minValue;
 }
 
 
@@ -720,12 +755,8 @@ int PlotxyFLTK::getSampleTime() {
 void PlotxyFLTK::setAutoZoom(bool value) {
     //Enable/Disable Autoscale
     this->enableAutoScaleWhileGraph = value;
-
-    //Recalculate scale_factor_y
-    this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
-
-    //Translate it in correct position
-    this->translateGraphY();
+    
+    this->scaleAndTranslateY();
 
     //Redraw everything
     this->redraw();
@@ -773,12 +804,13 @@ void PlotxyFLTK::setSampleTime(int sampleTime) {
 /**** END SET FUNCTION ****/
 
 void PlotxyFLTK::translateGraphY() {
+
     if ((this->vievedMinValue == 0) && (this->vievedMaxValue != 0))
-        this->translate_y = (y() + (h() - 15));
+        this->translate_y = (y() + (h() - 15));//When i've only positive values
     else if ((this->vievedMinValue != 0) && (this->vievedMaxValue == 0))
-        this->translate_y = (y());
+        this->translate_y = (y()); //When i've only negative values
     else
-        this->translate_y = (y() + (h() / 2));
+        this->translate_y = (y() + (h() / 2)); //When i've negative and positive values
 }
 
 void PlotxyFLTK::plotLine(float value) {
@@ -839,13 +871,9 @@ void PlotxyFLTK::zoomYDec() {
 
 void PlotxyFLTK::zoomAuto() {
     this->enableAutoScaleWhileGraph = !this->enableAutoScaleWhileGraph;
-    cout << "enableAutoScaleWhileGraph value:" << this->enableAutoScaleWhileGraph << endl;
+    //cout << "enableAutoScaleWhileGraph value:" << this->enableAutoScaleWhileGraph << endl;
 
-    //Recalculate scale_factor_y
-    this->scale_factor_y = ceil(fabs(this->vievedMaxValue) + fabs(this->vievedMinValue)) + 1;
-
-    //Translate it in correct position
-    this->translateGraphY();
+    this->scaleAndTranslateY();
 
     //Redraw everything
     this->redraw();
@@ -890,4 +918,3 @@ void PlotxyFLTK::zoomYDecMouseWheel() {
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;

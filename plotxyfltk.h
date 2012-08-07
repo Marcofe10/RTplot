@@ -37,7 +37,7 @@
 using namespace std;
 using namespace boost::posix_time;
 
-typedef struct _data_element{
+typedef struct _data_element {
     float value;
     float time;
 }data_element;
@@ -83,6 +83,16 @@ class PlotxyFLTK: public Fl_Box {
 
         //Allow enable/disable Autoscale graph during plot
         static void autoScaleBehaviour(Fl_Widget *widget, void *userdata);
+        
+         //Calculates the Min and max value along y axis
+        float findMaxValue(float val, float current_max);
+        float findMinValue(float val, float current_min);
+
+        //Get max and min value in a window of values
+        void getMaxMinWindowValue();
+        
+        //scale and translate along y
+        void scaleAndTranslateY();
 
         /******/
 
@@ -96,13 +106,14 @@ class PlotxyFLTK: public Fl_Box {
         int translate_value;
         float translate_x, translate_y;
 
-        //Min max value along y axis
+        //The Vieved min and max value along y axis
         float vievedMaxValue;
         float vievedMinValue;
 
-        //Get  Min max value along y axis
-        float getMaxValue(float, float);
-        float getMinValue(float, float);
+        //the min and max value along y axis
+        float maxValue;
+        float minValue;
+
 
         //Axis Name
         string xAxis, yAxis;
@@ -114,7 +125,7 @@ class PlotxyFLTK: public Fl_Box {
         int sampleTime;//Sample time (at the moment it's similar to samplePerSecond)
         Fl_Menu_Item *rclick_menu;
 
-        float time;//Simulation time calculated by sample 
+        float time;//Simulation time calculated by sample
         int residueTime;
 
         ptime simulationTime;
@@ -123,10 +134,12 @@ class PlotxyFLTK: public Fl_Box {
         bool plotLineInGraph;
         float plotLineInGraphValue;
 
+
+        //Contains element
         boost::circular_buffer<data_element> *dataCB;
-        
+
         //Common operation in insertValues e insertValue
-        int commonInsertValue(float value,float step);
+        int commonInsertValue(float value, float step);
 
 
 
@@ -141,7 +154,10 @@ class PlotxyFLTK: public Fl_Box {
         PlotxyFLTK(int xp, int yp, int wp, int hp, const char *lp = 0);
         ~PlotxyFLTK();
         int insertValuesToPlot(float *value, int nvalue, int samplePerSecond = 512);
-        void insertValueToPlot(float value, int samplePerSecond=512);
+        //int insertValuesToPlot(data_element *value, int nvalue, int samplePerSecond = 512);
+
+        void insertValueToPlot(float value, int samplePerSecond = 512);
+        //void insertValueToPlot(data_element value, int samplePerSecond=512);
 
 
         int getZoomXValue();
@@ -149,6 +165,8 @@ class PlotxyFLTK: public Fl_Box {
         int getTranslateYValue();
         float getSimulationSeconds();
         int getSampleTime();
+        float getMaxValue();
+        float getMinValue();
 
         void setAutoZoom(bool value);
         void setXAxis(char *name);
@@ -157,7 +175,6 @@ class PlotxyFLTK: public Fl_Box {
         void setTraceMax(int value);
         void setViedWidth(int value);
         void setSampleTime(int sampleTime);
-
 
         void zoomXDec();
         void zoomXInc();
@@ -176,3 +193,4 @@ class PlotxyFLTK: public Fl_Box {
 
 };
 #endif
+// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;

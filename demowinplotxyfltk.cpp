@@ -34,10 +34,10 @@ int k;
 void update_scope(void *valori) {
     int num;
     data_element *val = (data_element*)valori;
-    
+
     main_win->insertValueToPlot(val[k].value, 64);
     k++;
-    
+
 //     if (random() % 2)
 //         num = (random() % 2048) + 1;
 //     else
@@ -68,7 +68,8 @@ int main(int argc, char **argv) {
     float j;
     srand(time(NULL));
     float value_time;
-    int sample_time=64;
+    int sample_time = 64;
+    int fattore = 1;
 
 //     float *valori;
 //     valori= new float[512];
@@ -81,27 +82,27 @@ int main(int argc, char **argv) {
 //     main_win1->show();
 
     main_win->setSampleTime(sample_time);
-    value_time=1/64;
+    value_time = 1 / 64;
     for (i = 0; i < 10*N; i++) {
 
-        valori[i].time=value_time*i;
-        
-        if (i > 10)
-            valori[i].value = abs(sin((double)(i * 5 * 2 * M_PI / (double)N)));
-        else
-            valori[i].value = 0;        
+        valori[i].time = value_time * i;
+
+        if (i < (N / 2)) {
+            if (i % (N / 4))
+                fattore++;
+        } else
+            fattore--;
+
+        valori[i].value = fattore * abs(sin((double)(i * 5 * 2 * M_PI / (double)N)));
     }
-    
-    cout << "Valori Generati:" << 10*N << endl;
-    k = 0;
-    cout << "K:" << k << endl;
-    //k = main_win->insertValuesToPlot(valori, 10, sample_time);
-
-
-    cout << "K:" << k << endl;
+        cout << "Valori Generati:" << 10*N << endl;
+        k = 0;
+        cout << "K:" << k << endl;
+        //k = main_win->insertValuesToPlot(valori, 10, sample_time);
+        
 //     Fl::add_timeout(0.5, update_scope, valori);
-    Fl::add_timeout(0.5, update_scope, valori);
-    main_win->plotLine(0.5);
-    return Fl::run();
+        Fl::add_timeout(0.5, update_scope, valori);
+        main_win->plotLine(0.5);
+        return Fl::run();
+
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;  replace-tabs on;
