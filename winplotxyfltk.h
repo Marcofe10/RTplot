@@ -57,6 +57,11 @@ class WinPlotXYFLTK: public Fl_Double_Window {
         int insertValuesToPlot(float* value, int nvalue,int samplePerSecond=512);
         void insertValueToPlot(float value,int samplePerSecond=512);
         
+        //CONVERTION FUNCTION
+        
+        int convertDataElementToFloat(data_element* data, float *dataFloat, int nvalue);
+        
+        //SET FUNCTION
         void setXAxis(char *name);
         void setYAxis(char *name);
         void setAutoZoom(bool value);
@@ -64,7 +69,7 @@ class WinPlotXYFLTK: public Fl_Double_Window {
         void setTraceMin(int value);
         void setSampleTime(int sampleTime);
         
-        
+        //GET FUNCTION
         float getSimulationSeconds();
         int getSampleTime();
 

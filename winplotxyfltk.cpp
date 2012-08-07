@@ -307,5 +307,7 @@ void WinPlotXYFLTK::fullScreen(Fl_Widget* widget, void* userdata) {
 
 /* * * E N D STATIC FUNCTION  * * */
 
+int WinPlotXYFLTK::convertDataElementToFloat(data_element* data, float* dataFloat, int nvalue) {
+    return plot->convertDataElementToFloat(data, dataFloat, nvalue);
+}
 
-// kate: indent-mode cstyle; space-indent on; indent-width 4; replace-tabs on;  replace-tabs on;

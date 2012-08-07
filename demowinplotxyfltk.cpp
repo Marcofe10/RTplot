@@ -65,11 +65,13 @@ int main(int argc, char **argv) {
     int i;
     //float valori[10*N];
     data_element valori[10*N];
+    float *valoriFloat;
     float j;
     srand(time(NULL));
     float value_time;
     int sample_time = 64;
     int fattore = 1;
+    int nvalues = 2000;
 
 //     float *valori;
 //     valori= new float[512];
@@ -80,6 +82,8 @@ int main(int argc, char **argv) {
 
 //     main_win1 = new WinPlotXYFLTK(0, 0, 800, 600, "Scope Window");
 //     main_win1->show();
+
+    valoriFloat = new float[nvalues];
 
     main_win->setSampleTime(sample_time);
     value_time = 1 / 64;
@@ -93,16 +97,25 @@ int main(int argc, char **argv) {
         } else
             fattore--;
 
-        valori[i].value = fattore * abs(sin((double)(i * 5 * 2 * M_PI / (double)N)));
+        valori[i].value = fattore * (sin((double)(i * 5 * 2 * M_PI / (double)N)));
     }
-        cout << "Valori Generati:" << 10*N << endl;
-        k = 0;
-        cout << "K:" << k << endl;
-        //k = main_win->insertValuesToPlot(valori, 10, sample_time);
-        
-//     Fl::add_timeout(0.5, update_scope, valori);
-        Fl::add_timeout(0.5, update_scope, valori);
-        main_win->plotLine(0.5);
-        return Fl::run();
+    /*
+        for (i = 0; i < 10*N; i++) {
+            valori[i].time = value_time * i;
+            if (sin((double)(i * 5 * 2 * M_PI / (double)N)) > 0)
+                valori[i].value = sin((double)(i * 5 * 2 * M_PI / (double)N));
+            else
+                valori[i].value =7* sin((double)(i * 5 * 2 * M_PI / (double)N));
+
+        }*/
+    cout << "Valori Generati:" << 10*N << endl;
+    k = 0;
+    cout << "K:" << k << endl;
+//    main_win->convertDataElementToFloat(valori, valoriFloat, nvalues);
+//    k = main_win->insertValuesToPlot(valoriFloat, nvalues, sample_time);
+
+    Fl::add_timeout(0.5, update_scope, valori);
+    main_win->plotLine(0.5);
+    return Fl::run();
 
 }

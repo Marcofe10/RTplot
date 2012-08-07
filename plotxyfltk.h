@@ -154,12 +154,15 @@ class PlotxyFLTK: public Fl_Box {
         PlotxyFLTK(int xp, int yp, int wp, int hp, const char *lp = 0);
         ~PlotxyFLTK();
         int insertValuesToPlot(float *value, int nvalue, int samplePerSecond = 512);
-        //int insertValuesToPlot(data_element *value, int nvalue, int samplePerSecond = 512);
 
         void insertValueToPlot(float value, int samplePerSecond = 512);
         //void insertValueToPlot(data_element value, int samplePerSecond=512);
+        
+        
+        //CONVERTION FUNCTION   
+        int convertDataElementToFloat(data_element *data,float *dataFloat,int nvalue);
 
-
+        //GET FUNCTION
         int getZoomXValue();
         int getZoomYValue();
         int getTranslateYValue();
@@ -168,6 +171,7 @@ class PlotxyFLTK: public Fl_Box {
         float getMaxValue();
         float getMinValue();
 
+        //SET FUNCTION
         void setAutoZoom(bool value);
         void setXAxis(char *name);
         void setYAxis(char *name);
