@@ -51,6 +51,8 @@ class WinPlotXYFLTK: public Fl_Double_Window {
         static void translateYUp(Fl_Widget *widget, void *userdata);
         static void fullScreen(Fl_Widget *widget, void *userdata);
         void draw();
+        
+        void refreshValueOutput();
 
     public:
         WinPlotXYFLTK(int X, int Y, int W, int H, const char* l);
@@ -77,6 +79,7 @@ class WinPlotXYFLTK: public Fl_Double_Window {
         //plot line into graph
         void plotLine(float value);
     protected:
+        int handle(int e);
 
 };
 

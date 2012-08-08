@@ -30,7 +30,6 @@
 #include <boost/circular_buffer.hpp>
 
 #include <cmath>
-#include <math.h>
 #include <iostream>
 #include "plotxyfltk.h"
 

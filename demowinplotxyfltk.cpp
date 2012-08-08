@@ -50,7 +50,7 @@ void update_scope(void *valori) {
 
 
     //0.002
-    Fl::repeat_timeout(0.02, update_scope, valori);
+    Fl::repeat_timeout(0.1, update_scope, valori);
 }
 
 // void update_scope1(void *valori) {

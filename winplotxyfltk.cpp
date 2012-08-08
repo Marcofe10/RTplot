@@ -86,11 +86,25 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Doub
     this->valueOutputZoomY->value(plot->getZoomYValue());
 }
 
+int WinPlotXYFLTK::handle(int e) {
+    int ret = Fl_Window::handle(e);
+    
+    switch (e) {
+    case FL_MOUSEWHEEL:
+        this->refreshValueOutput();
+        damage(FL_DAMAGE_USER1);
+        ret = 1;
+
+        break;
+    }
+    return(ret);
+}
+
+
 void WinPlotXYFLTK::draw() {
     this->valueOutputZoomX->value(this->plot->getZoomXValue());
     this->valueOutputZoomY->value(this->plot->getZoomYValue());
     this->valueOutputTranslateY->value(this->plot->getTranslateYValue());
-
     this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds());
 //     this->plot->redraw();
     Fl_Window::draw();
@@ -310,4 +324,12 @@ void WinPlotXYFLTK::fullScreen(Fl_Widget* widget, void* userdata) {
 int WinPlotXYFLTK::convertDataElementToFloat(data_element* data, float* dataFloat, int nvalue) {
     return plot->convertDataElementToFloat(data, dataFloat, nvalue);
 }
+
+void WinPlotXYFLTK::refreshValueOutput() {
+    this->valueOutputZoomX->redraw();
+    this->valueOutputZoomY->redraw();
+    this->valueOutputTranslateY->redraw();
+    this->valueOutputTimeSimulations->redraw();
+}
+
 
