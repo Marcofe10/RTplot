@@ -37,7 +37,7 @@ using namespace std;
 
 PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(xp, yp, wp, hp, lp) {
     /***DEFAULT VALUES***/
-
+    
     this->trace_min = 512;//min number of values
     this->trace_max = this->trace_min * 64;//max number of values 512*64
     this->view_width = this->trace_min;//numbers showed
@@ -67,15 +67,15 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
 //     trace = new float[trace_max];
     this->view = 0;
 
-    this->initial_x = 0;
-    this->initial_y = 0;
+//     this->initial_x = 0;
+//     this->initial_y = 0;
     this->vievedMaxValue = 0;
     this->vievedMinValue = 0;
 
     this->secondTag = 0.0;
 //     this->incTagAxesValue = 0;
     this->time = 0.0;
-    this->residueTime = 0;
+    // this->residueTime = 0;
 
     this->simulationTime = second_clock::local_time();
 
@@ -84,16 +84,14 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
 
     this->dataCB = new boost::circular_buffer<data_element>(this->trace_max);
 
+    this->enableRightMouseMenu = true;
 
-//     //FIXME don't show Zoom+ and Zoom-
-//     //Popup menu option list
-//     rclick_menu = new Fl_Menu_Item[4];
-//     rclick_menu->insert(0, "Zoom+", 0, zoomDec, (void*)this);
-//     rclick_menu->insert(1, "Zoom-", 0, zoomInc, (void*)this, FL_MENU_DIVIDER);
-//     rclick_menu->insert(2, "Scale", 0, scale, (void*)this);
-//     rclick_menu->insert(3, "AutoScale", 0, autoScaleBehaviour, (void*)this, FL_MENU_TOGGLE | FL_MENU_VALUE);
-//        rclick_menu->add( 0 }
-
+    //     //FIXME don't show Zoom+ and Zoom-
+    //Popup menu option list
+    rclick_menu->add("Zoom+", 0, zoomDec, (void*)this);
+    rclick_menu->add("Zoom-", 0, zoomInc, (void*)this, FL_MENU_DIVIDER);
+    rclick_menu->add("Scale", 0, scale, (void*)this);
+    rclick_menu->add("AutoScale", 0, autoScaleBehaviour, (void*)this, FL_MENU_TOGGLE | FL_MENU_VALUE);
 }
 
 
@@ -104,64 +102,62 @@ PlotxyFLTK::~PlotxyFLTK() {
 
 /**** STATIC FUNCTION ****/
 
-// void PlotxyFLTK::zoomInc(Fl_Widget *widget, void *userdata) {
-//     cout << "*** ZOOM + ***" << endl;
-//     PlotxyFLTK *in = (PlotxyFLTK*)userdata;
-//
-//     in->scale_factor_y /= 2;
-//
-//     in->view_width /= 2;
-//     if (in->scale_factor_y < 1) {
-//         in->scale_factor_y = 1;
-//     }
-//
-//     in->scale_factor_x /= 2;
-//     if (in->scale_factor_x < 1) {
-//         in->scale_factor_x = 1;
-//
-//     }
-//
-//     if (in->view_width < in->trace_min) {
-//         in->view_width = in->trace_min;
-//     }
-//
-//
-//     cout << "Zoom+ | scale_factor_x:" << in->scale_factor_y << " scale_factor_x:" << in->scale_factor_x << " view_width:" << in->view_width << endl;
-//
-//     in->redraw();
-//
-// }
+void PlotxyFLTK::zoomInc(Fl_Widget *widget, void *userdata) {
+    cout << "*** ZOOM + ***" << endl;
+    PlotxyFLTK *in = (PlotxyFLTK*)userdata;
+
+    in->scale_factor_y /= 2;
+
+    in->view_width /= 2;
+    if (in->scale_factor_y < 1) {
+        in->scale_factor_y = 1;
+    }
+
+    in->scale_factor_x /= 2;
+    if (in->scale_factor_x < 1) {
+        in->scale_factor_x = 1;
+
+    }
+
+    if (in->view_width < in->trace_min) {
+        in->view_width = in->trace_min;
+    }
 
 
-// void PlotxyFLTK::zoomDec(Fl_Widget *widget, void *userdata) {
-//     cout << "*** ZOOM - ***" << endl;
-//     PlotxyFLTK *in = (PlotxyFLTK*)userdata;
-//
-//     in->view_width *= 2;
-//
-//     in->scale_factor_y *= 2;
-//     if (in->scale_factor_y >= 200000) {
-//         in->scale_factor_y = 32;
-//     }
-//
-//     in->scale_factor_x *= 2;
-//     if (in->scale_factor_x >= 32) {
-//         in->scale_factor_x = 32;
-//         //in->view_width = in->trace_max;
-//     }
-//
-//     if (in->view_width > in->trace_max) {
-//         in->view_width = in->trace_max;
-//     }
-//
-//
-//
-//     cout << "Zoom- | scale_factor_x:" << in->scale_factor_y << " scale_factor_x:" << in->scale_factor_x << " view_width:" << in->view_width << endl;
-//     in->redraw();
-//
-// }
+    cout << "Zoom+ | scale_factor_x:" << in->scale_factor_y << " scale_factor_x:" << in->scale_factor_x << " view_width:" << in->view_width << endl;
+
+    in->redraw();
+
+}
 
 
+void PlotxyFLTK::zoomDec(Fl_Widget *widget, void *userdata) {
+    cout << "*** ZOOM - ***" << endl;
+    PlotxyFLTK *in = (PlotxyFLTK*)userdata;
+
+    in->view_width *= 2;
+
+    in->scale_factor_y *= 2;
+    if (in->scale_factor_y >= 200000) {
+        in->scale_factor_y = 32;
+    }
+
+    in->scale_factor_x *= 2;
+    if (in->scale_factor_x >= 32) {
+        in->scale_factor_x = 32;
+        //in->view_width = in->trace_max;
+    }
+
+    if (in->view_width > in->trace_max) {
+        in->view_width = in->trace_max;
+    }
+
+
+
+    cout << "Zoom- | scale_factor_x:" << in->scale_factor_y << " scale_factor_x:" << in->scale_factor_x << " view_width:" << in->view_width << endl;
+    in->redraw();
+
+}
 
 void PlotxyFLTK::scale(Fl_Widget *widget, void *userdata) {
     cout << "*** AUTOZOOM ***" << endl;
@@ -184,9 +180,11 @@ void PlotxyFLTK::autoScaleBehaviour(Fl_Widget* widget, void* userdata) {
     else
         in->rclick_menu[3].set();
 
+    cout << "*** END AUTOSCALE ***" << endl;
+
 }
 
-/********/
+/**** END STATIC FUNCTION ****/
 
 
 // static void Copy_CB(Fl_Widget*, void *userdata) {
@@ -210,7 +208,6 @@ int PlotxyFLTK::handle(int e) {
     switch (e) {
 
 //     case FL_DRAG:
-//         cout << "miaooo " << hex << Fl::event_state() << endl;
 //
 //         if (Fl::event_state() == FL_LEFT_MOUSE) {
 //             cout << "entrooo" << endl;
@@ -221,16 +218,28 @@ int PlotxyFLTK::handle(int e) {
 //
 //         break;
 
-//     case FL_PUSH:
-//         if (Fl::event_button() == FL_RIGHT_MOUSE) {
-//             const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, 0);
-//             if (m)
-//                 m->do_callback(0, m->user_data());
-//             return(1);          // (tells caller we handled this event)
-//         }
-//
-//         return(1);//it allow to use FL_DRAG (see documentation)
-//         break;
+    case FL_PUSH:
+        if (this->enableRightMouseMenu) {
+            if (Fl::event_button() == FL_RIGHT_MOUSE) {
+                //Popup menu option list
+//                 Fl_Menu_Item rclick_menu[] = {
+//                     {"Zoom+", 0, zoomDec, (void*)this},
+//                     {"Zoom-", 0, zoomInc, (void*)this, FL_MENU_DIVIDER},
+//                     {"Scale", 0, scale, (void*)this},
+//                     {"AutoScale", 0, autoScaleBehaviour, (void*)this, FL_MENU_TOGGLE | FL_MENU_VALUE},
+//                     {0}};
+
+                const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, 0);
+
+
+                if (m)
+                    m->do_callback(0, m->user_data());
+                return(1);          // (tells caller we handled this event)
+            }
+
+            return(1);//it allow to use FL_DRAG (see documentation)
+        }
+        break;
     case FL_RELEASE:
         // RIGHT MOUSE RELEASED? Mask it from Fl_Input
         if (Fl::event_button() == FL_RIGHT_MOUSE) {
@@ -818,6 +827,11 @@ void PlotxyFLTK::setSampleTime(int sampleTime) {
     this->sampleTime = sampleTime;
 }
 
+void PlotxyFLTK::setenableRightMouseMenu(bool value) {
+    this->enableRightMouseMenu = value;
+}
+
+
 
 /**** END SET FUNCTION ****/
 
@@ -890,7 +904,7 @@ void PlotxyFLTK::zoomYDec() {
 
 void PlotxyFLTK::zoomAuto() {
     this->enableAutoScaleWhileGraph = !this->enableAutoScaleWhileGraph;
-    //cout << "enableAutoScaleWhileGraph value:" << this->enableAutoScaleWhileGraph << endl;
+    cout << "enableAutoScaleWhileGraph value:" << this->enableAutoScaleWhileGraph << endl;
 
     this->scaleAndTranslateY();
 
@@ -937,4 +951,5 @@ void PlotxyFLTK::zoomYDecMouseWheel() {
     cout << "Zoom- | scale_factor_y:" << this->scale_factor_y << endl;
     this->redraw();
 }
+
 

@@ -32,14 +32,14 @@ class WinPlotXYFLTK: public Fl_Double_Window {
     private:
 
         PlotxyFLTK *plot;
-        
+
         Fl_Button *buttonZoomXInc, *buttonZoomXDec, *buttonZoomYInc, *buttonZoomYDec, *buttonTranslateYUp;
         Fl_Button *buttonTranslateYDown;
-        
-        Fl_Check_Button *checkButtonAutoScale,*checkButtonFullScreen;;
-        Fl_Value_Output *valueOutputZoomX, *valueOutputZoomY, *valueOutputTranslateY,*valueOutputTimeSimulations;
-        
-        int X,Y,W,H;
+
+        Fl_Check_Button *checkButtonAutoScale, *checkButtonFullScreen;;
+        Fl_Value_Output *valueOutputZoomX, *valueOutputZoomY, *valueOutputTranslateY, *valueOutputTimeSimulations;
+
+        int X, Y, W, H;
 
         static void zoomXInc(Fl_Widget *widget, void *userdata);
         static void zoomXDec(Fl_Widget *widget, void *userdata);
@@ -51,36 +51,52 @@ class WinPlotXYFLTK: public Fl_Double_Window {
         static void translateYUp(Fl_Widget *widget, void *userdata);
         static void fullScreen(Fl_Widget *widget, void *userdata);
         void draw();
-        
+
         void refreshValueOutput();
 
-    public:
-        WinPlotXYFLTK(int X, int Y, int W, int H, const char* l);
-        int insertValuesToPlot(float* value, int nvalue,int samplePerSecond=512);
-        void insertValueToPlot(float value,int samplePerSecond=512);
-        
-        //CONVERTION FUNCTION
-        
-        int convertDataElementToFloat(data_element* data, float *dataFloat, int nvalue);
-        
-        //SET FUNCTION
-        void setXAxis(char *name);
-        void setYAxis(char *name);
-        void setAutoZoom(bool value);
-        void setViedWidth(int value);
-        void setTraceMin(int value);
-        void setSampleTime(int sampleTime);
-        
-        //GET FUNCTION
-        float getSimulationSeconds();
-        int getSampleTime();
-
-
-        //plot line into graph
-        void plotLine(float value);
     protected:
         int handle(int e);
 
+    public:
+        WinPlotXYFLTK(int X, int Y, int W, int H, const char* l);
+        int insertValuesToPlot(float* value, int nvalue, int samplePerSecond = 512);
+        void insertValueToPlot(float value, int samplePerSecond = 512);
+
+        //CONVERTION FUNCTION
+
+        int convertDataElementToFloat(data_element* data, float *dataFloat, int nvalue);
+
+        //SET FUNCTION
+
+        //Set X Axes name
+        void setXAxis(char *name);
+
+        //Set Y Axes name
+        void setYAxis(char *name);
+
+        //Set Auto Zoom
+        void setAutoZoom(bool value);
+
+        //Set viewed width value
+        void setViedWidth(int value);
+
+        //Set trace min value
+        void setTraceMin(int value);
+
+        //Set sample time
+        void setSampleTime(int sampleTime);
+
+        //GET FUNCTION
+
+        //Gets simulation second
+        float getSimulationSeconds();
+
+        //Gets sample time
+        int getSampleTime();
+
+
+        //Plot line into graph
+        void plotLine(float value);
 };
 
 #endif // WINPLOTXYFLTK_H

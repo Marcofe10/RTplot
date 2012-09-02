@@ -43,10 +43,11 @@ typedef struct _data_element {
 }data_element;
 
 /*
- * Classe inerente alla parte grafica
+ * Class relative to graphic part
  */
 class PlotxyFLTK: public Fl_Box {
     private:
+        //*** VARIABLE ***//
         int trace_max;//max number of values
         int trace_min;//min number of values
         int view_width;//numbers showed
@@ -59,8 +60,52 @@ class PlotxyFLTK: public Fl_Box {
         float *trace;//all value
         float *view;//showed values
         int insertsValues;//contains the values number acquired
-        int initial_x, initial_y;
+        //int initial_x, initial_y;
 
+        float timeOut;//plot Timeout. it used from updateScope funtion
+
+        //Bool to enable autoscale while graphing
+        bool enableAutoScaleWhileGraph;
+
+        // Scale,translate parameters
+        float scale_factor_x;
+        float scale_factor_y;
+        int translate_value;
+        float translate_x, translate_y;
+
+        //The Vieved min and max value along y axis
+        float vievedMaxValue;
+        float vievedMinValue;
+
+        //the min and max value along y axis
+        float maxValue;
+        float minValue;
+
+        //Axis Name
+        string xAxis, yAxis;
+
+        float secondTag;//Use to move second tag (line to sign seconds)
+
+        int samplePerSecond;//Sample per second. Use to plot secondtag in relationship of view_width
+        int sampleTime;//Sample time (at the moment it's similar to samplePerSecond)
+        Fl_Menu_Item rclick_menu[5];
+
+        float time;//Simulation time calculated by sample
+        //int residueTime;
+
+        ptime simulationTime;
+
+        //Used to plot line into graph
+        bool plotLineInGraph;
+        float plotLineInGraphValue;
+
+
+        //Contains element
+        boost::circular_buffer<data_element> *dataCB;
+
+        //******//
+
+        // *** FUNCTIONS ***
         //Insert element in tail
         void insertInTail(float element);
 
@@ -83,65 +128,23 @@ class PlotxyFLTK: public Fl_Box {
 
         //Allow enable/disable Autoscale graph during plot
         static void autoScaleBehaviour(Fl_Widget *widget, void *userdata);
-        
-         //Calculates the Min and max value along y axis
+
+        //Calculates the Min and max value along y axis
         float findMaxValue(float val, float current_max);
         float findMinValue(float val, float current_min);
 
         //Get max and min value in a window of values
         void getMaxMinWindowValue();
-        
+
         //scale and translate along y
         void scaleAndTranslateY();
 
-        /******/
-
-        float timeOut;//plot Timeout. it used from updateScope funtion
-
-        bool enableAutoScaleWhileGraph;
-
-        // Scale,translate parameters
-        float scale_factor_x;
-        float scale_factor_y;
-        int translate_value;
-        float translate_x, translate_y;
-
-        //The Vieved min and max value along y axis
-        float vievedMaxValue;
-        float vievedMinValue;
-
-        //the min and max value along y axis
-        float maxValue;
-        float minValue;
-
-
-        //Axis Name
-        string xAxis, yAxis;
-
-        float intermidiateSecondsTag;
-        float secondTag;//Use to move second tag (line to sign seconds)
-//         int incTagAxesValue;//Used to change range of X axes
-        int samplePerSecond;//Sample per second. Use to plot secondtag in relationship of view_width
-        int sampleTime;//Sample time (at the moment it's similar to samplePerSecond)
-        Fl_Menu_Item *rclick_menu;
-
-        float time;//Simulation time calculated by sample
-        int residueTime;
-
-        ptime simulationTime;
-
-        //Used to plot line into graph
-        bool plotLineInGraph;
-        float plotLineInGraphValue;
-
-
-        //Contains element
-        boost::circular_buffer<data_element> *dataCB;
 
         //Common operation in insertValues e insertValue
         int commonInsertValue(float value, float step);
+        /******/
 
-
+        bool enableRightMouseMenu;
 
 
     protected:
@@ -157,18 +160,29 @@ class PlotxyFLTK: public Fl_Box {
 
         void insertValueToPlot(float value, int samplePerSecond = 512);
         //void insertValueToPlot(data_element value, int samplePerSecond=512);
-        
-        
-        //CONVERTION FUNCTION   
-        int convertDataElementToFloat(data_element *data,float *dataFloat,int nvalue);
+
+
+        //CONVERTION FUNCTIONS
+        int convertDataElementToFloat(data_element *data, float *dataFloat, int nvalue);
 
         //GET FUNCTION
+        //Gets x zoom value
         int getZoomXValue();
+
+        //Gets Y zoom value
         int getZoomYValue();
         int getTranslateYValue();
+
+        //Gets simulation seconds
         float getSimulationSeconds();
+
+        //Gets sample time
         int getSampleTime();
+
+        //Gets max value
         float getMaxValue();
+
+        //Gets min value
         float getMinValue();
 
         //SET FUNCTION
@@ -179,19 +193,38 @@ class PlotxyFLTK: public Fl_Box {
         void setTraceMax(int value);
         void setViedWidth(int value);
         void setSampleTime(int sampleTime);
+        void setenableRightMouseMenu(bool value);
 
+        //Increments X width and scale factor along x (It corresponds to zoom decrement)
         void zoomXDec();
+
+        //Decrements X width and scale factor along x (It corresponds to zoom increment)
         void zoomXInc();
+
+        //Increments Y scale factor along y (It corresponds to zoom decrement)
         void zoomYDec();
+
+        //Decrements Y  scale factor along y (It corresponds to zoom increment)
         void zoomYInc();
+
+         //Increments Y  scale factor along y (It corresponds to zoom decrement) with mouse wheel
         void zoomYDecMouseWheel();
+        
+        //Decrements Y scale factor along y (It corresponds to zoom increment) with mouse wheel
         void zoomYIncMouseWheel();
+        
+        //Enable/Disable Autozoom
         void zoomAuto();
-        void translateX();
+        
+        void translateX();//??
+        
+        //Translates y downwards
         void translateYDown();
+        
+        //TRanslates y upwards
         void translateYUp();
 
-        //plot line into graph
+        //Plot line into graph
         void plotLine(float value);
 
 

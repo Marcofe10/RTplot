@@ -36,6 +36,8 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Doub
     this->plot = new PlotxyFLTK(xw, yw, ww, hw);
     //this->plot->show();
     this->box(FL_PLASTIC_UP_BOX);
+    
+    this->resizable(plot);
 
     this->buttonZoomXInc = new Fl_Button(ww + 2, 10, BUTTON_SIZE, 20, "ZoomX +");
     this->buttonZoomXDec = new Fl_Button(ww + 2, 30, BUTTON_SIZE, 20, "ZoomX -");
@@ -84,6 +86,7 @@ WinPlotXYFLTK::WinPlotXYFLTK(int X, int Y, int W, int H, const char* l): Fl_Doub
     this->valueOutputTranslateY->value(plot->getTranslateYValue());
     this->valueOutputZoomX->value(plot->getZoomXValue());
     this->valueOutputZoomY->value(plot->getZoomYValue());
+    this->plot->setenableRightMouseMenu(false);
 }
 
 int WinPlotXYFLTK::handle(int e) {

@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
     main_win->begin();
     scope = new PlotxyFLTK(0, 0, 800, 600);
     scope->show();
-    
+    main_win->resizable(scope);
     main_win->end();
     main_win->show(argc, argv);
 
