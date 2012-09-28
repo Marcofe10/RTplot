@@ -1,5 +1,6 @@
 *** SVILUPPI FUTURI ***
 
++ Possibilità che tenedo il bottone sinitro e spostando il mouse si sposta l'asse x lungo y
 
 
 + Il plot deve essere fatto sulla finestra di visualizzazione e non sui valori max trovati. Quindi deve essere fatta sui valori max e min visualizzati.
@@ -10,9 +11,7 @@
 
 *** BUG ***
 
-? Ha senso impostare il sample time nelle funzioni insertValueToPlot e insertValuesToPlot?!?
-* Risolvere problema della segmentation Fault sulrclick_menu[]
-                
+? Ha senso impostare il sample time nelle funzioni insertValueToPlot e insertValuesToPlot?!?              
 
 
 *** O K ***

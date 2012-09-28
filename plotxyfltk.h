@@ -33,13 +33,12 @@
 
 #define NVERTICAL 10
 
-
 using namespace std;
 using namespace boost::posix_time;
 
 typedef struct _data_element {
-    float value;
     float time;
+    float value;
 }data_element;
 
 /*
@@ -84,10 +83,14 @@ class PlotxyFLTK: public Fl_Box {
         //Axis Name
         string xAxis, yAxis;
 
+        //Contains element
+        boost::circular_buffer<data_element> *dataCB;
+
         float secondTag;//Use to move second tag (line to sign seconds)
 
         int samplePerSecond;//Sample per second. Use to plot secondtag in relationship of view_width
         int sampleTime;//Sample time (at the moment it's similar to samplePerSecond)
+        //Menu Item
         Fl_Menu_Item rclick_menu[5];
 
         float time;//Simulation time calculated by sample
@@ -98,10 +101,6 @@ class PlotxyFLTK: public Fl_Box {
         //Used to plot line into graph
         bool plotLineInGraph;
         float plotLineInGraphValue;
-
-
-        //Contains element
-        boost::circular_buffer<data_element> *dataCB;
 
         //******//
 
@@ -118,7 +117,11 @@ class PlotxyFLTK: public Fl_Box {
         //Function used by FLTK
         void draw();
 
+        //Enable/Disable menu with right click
+        bool enableRightMouseMenu;
+        
         /***FL_MENU_ITEM FUNCTION***/
+        
         //Zoom static function
         static void zoomInc(Fl_Widget *widget, void *userdata);
         static void zoomDec(Fl_Widget *widget, void *userdata);
@@ -139,13 +142,11 @@ class PlotxyFLTK: public Fl_Box {
         //scale and translate along y
         void scaleAndTranslateY();
 
-
         //Common operation in insertValues e insertValue
         int commonInsertValue(float value, float step);
+        
+        vector<string> stringToWriteinGraph;
         /******/
-
-        bool enableRightMouseMenu;
-
 
     protected:
         int handle(int e);
@@ -160,10 +161,12 @@ class PlotxyFLTK: public Fl_Box {
 
         void insertValueToPlot(float value, int samplePerSecond = 512);
         //void insertValueToPlot(data_element value, int samplePerSecond=512);
+        
+        void addStringToGraph(const char *str);
 
 
         //CONVERTION FUNCTIONS
-        int convertDataElementToFloat(data_element *data, float *dataFloat, int nvalue);
+        int convertDataElementToFloat(data_element *dataelement, float *dataFloat, int nvalue);
 
         //GET FUNCTION
         //Gets x zoom value
@@ -207,20 +210,20 @@ class PlotxyFLTK: public Fl_Box {
         //Decrements Y  scale factor along y (It corresponds to zoom increment)
         void zoomYInc();
 
-         //Increments Y  scale factor along y (It corresponds to zoom decrement) with mouse wheel
+        //Increments Y  scale factor along y (It corresponds to zoom decrement) with mouse wheel
         void zoomYDecMouseWheel();
-        
+
         //Decrements Y scale factor along y (It corresponds to zoom increment) with mouse wheel
         void zoomYIncMouseWheel();
-        
+
         //Enable/Disable Autozoom
         void zoomAuto();
-        
+
         void translateX();//??
-        
+
         //Translates y downwards
         void translateYDown();
-        
+
         //TRanslates y upwards
         void translateYUp();
 

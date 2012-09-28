@@ -24,7 +24,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Printer.H>
-#include <FL/x.H>
+//#include <FL/x.H>
 
 #include <boost/date_time.hpp>
 #include <boost/circular_buffer.hpp>
@@ -37,7 +37,7 @@ using namespace std;
 
 PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(xp, yp, wp, hp, lp) {
     /***DEFAULT VALUES***/
-    
+
     this->trace_min = 512;//min number of values
     this->trace_max = this->trace_min * 64;//max number of values 512*64
     this->view_width = this->trace_min;//numbers showed
@@ -62,10 +62,10 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
 //     trace_pos = 0;
 //     view_pos = 0;
     this->view_break = 0;
-//     this->offesetDraw = 0;
-
-//     trace = new float[trace_max];
     this->view = 0;
+//     this->offesetDraw = 0;
+//     trace = new float[trace_max];
+
 
 //     this->initial_x = 0;
 //     this->initial_y = 0;
@@ -86,12 +86,28 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
 
     this->enableRightMouseMenu = true;
 
-    //     //FIXME don't show Zoom+ and Zoom-
     //Popup menu option list
     rclick_menu->add("Zoom+", 0, zoomDec, (void*)this);
     rclick_menu->add("Zoom-", 0, zoomInc, (void*)this, FL_MENU_DIVIDER);
     rclick_menu->add("Scale", 0, scale, (void*)this);
     rclick_menu->add("AutoScale", 0, autoScaleBehaviour, (void*)this, FL_MENU_TOGGLE | FL_MENU_VALUE);
+
+
+    // Coordinates as a string
+
+    char s[5][80];
+
+    ///*sprintf(s[0], "x:%d y:%d", (int)Fl::event_x(), (int)Fl::event_y());*/
+    sprintf(s[1], "Max:%.4f", this->vievedMaxValue);//Corresponds to max value
+    sprintf(s[2], "Min:%.4f", this->vievedMinValue);//Corresponds to min value
+    sprintf(s[3], "Pres:%d", this->insertsValues);//Corresponds to insertsValues
+    sprintf(s[4], "SampSec:%d", this->samplePerSecond);//Corresponds to insertsValues
+
+    stringToWriteinGraph.push_back(s[0]);
+    stringToWriteinGraph.push_back(s[1]);
+    stringToWriteinGraph.push_back(s[2]);
+    stringToWriteinGraph.push_back(s[3]);
+    stringToWriteinGraph.push_back(s[4]);
 }
 
 
@@ -116,7 +132,6 @@ void PlotxyFLTK::zoomInc(Fl_Widget *widget, void *userdata) {
     in->scale_factor_x /= 2;
     if (in->scale_factor_x < 1) {
         in->scale_factor_x = 1;
-
     }
 
     if (in->view_width < in->trace_min) {
@@ -129,7 +144,6 @@ void PlotxyFLTK::zoomInc(Fl_Widget *widget, void *userdata) {
     in->redraw();
 
 }
-
 
 void PlotxyFLTK::zoomDec(Fl_Widget *widget, void *userdata) {
     cout << "*** ZOOM - ***" << endl;
@@ -151,8 +165,6 @@ void PlotxyFLTK::zoomDec(Fl_Widget *widget, void *userdata) {
     if (in->view_width > in->trace_max) {
         in->view_width = in->trace_max;
     }
-
-
 
     cout << "Zoom- | scale_factor_x:" << in->scale_factor_y << " scale_factor_x:" << in->scale_factor_x << " view_width:" << in->view_width << endl;
     in->redraw();
@@ -221,16 +233,7 @@ int PlotxyFLTK::handle(int e) {
     case FL_PUSH:
         if (this->enableRightMouseMenu) {
             if (Fl::event_button() == FL_RIGHT_MOUSE) {
-                //Popup menu option list
-//                 Fl_Menu_Item rclick_menu[] = {
-//                     {"Zoom+", 0, zoomDec, (void*)this},
-//                     {"Zoom-", 0, zoomInc, (void*)this, FL_MENU_DIVIDER},
-//                     {"Scale", 0, scale, (void*)this},
-//                     {"AutoScale", 0, autoScaleBehaviour, (void*)this, FL_MENU_TOGGLE | FL_MENU_VALUE},
-//                     {0}};
-
                 const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, 0);
-
 
                 if (m)
                     m->do_callback(0, m->user_data());
@@ -288,21 +291,15 @@ int PlotxyFLTK::handle(int e) {
 }
 
 void PlotxyFLTK::drawCoordsAndOthers() {
-    // Coordinates as a string
-    char s[5][80];
     int i;
-
-    sprintf(s[0], "x:%d y:%d", (int)Fl::event_x(), (int)Fl::event_y());
-//     sprintf(tag, "Pres:%.4f", this->secondTag);
-    sprintf(s[1], "Max:%.4f", this->vievedMaxValue);//Corresponds to max value
-    sprintf(s[2], "Min:%.4f", this->vievedMinValue);//Corresponds to min value
-    sprintf(s[3], "Pres:%d", this->insertsValues);//Corresponds to insertsValues
-    sprintf(s[4], "SampSec:%d", this->samplePerSecond);//Corresponds to insertsValues
+    char str[80];
 
     fl_color(FL_YELLOW);
     fl_font(FL_HELVETICA, 9);
-    for (i = 0;i < 5;i++) {
-        fl_draw(s[i], this->w() - 70, 15 + (11*i));
+    sprintf(str, "x:%d y:%d", (int)Fl::event_x(), (int)Fl::event_y());
+    //TODO Aggiungere modifica della stringa di vector alla posizione 0
+    for (i = 0;i < stringToWriteinGraph.size();i++) {
+        fl_draw(stringToWriteinGraph.at(i).c_str(), this->w() - 70, 15 + (11*i));
     }
 //     fl_draw(s, this->W - 70, 15);
 //     fl_draw(inserts_values, this->w() - 70, 15 + (11*i));
@@ -726,6 +723,11 @@ void PlotxyFLTK::scaleAndTranslateY() {
 
 
 /**** END PRIVATE FUNCTION ****/
+
+void PlotxyFLTK::addStringToGraph(const char* str) {
+    stringToWriteinGraph.push_back(str);
+}
+
 
 /**** CONVERTION FUNCTION ****/
 

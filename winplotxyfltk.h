@@ -61,6 +61,8 @@ class WinPlotXYFLTK: public Fl_Double_Window {
         WinPlotXYFLTK(int X, int Y, int W, int H, const char* l);
         int insertValuesToPlot(float* value, int nvalue, int samplePerSecond = 512);
         void insertValueToPlot(float value, int samplePerSecond = 512);
+        
+        void addStringToGraph(const char *str);
 
         //CONVERTION FUNCTION
 
