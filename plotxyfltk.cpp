@@ -231,20 +231,20 @@ int PlotxyFLTK::handle(int e) {
 //             //fl_draw_box(_FL_DIAMOND_DOWN_BOX,0,0,(int)Fl::event_x(), (int)Fl::event_y(),FL_WHITE);
 //         }
         if (Fl::event_button() == FL_LEFT_MOUSE) {
-
-            //cout << "Push Fl::event_button() == FL_LEFT_MOUS" << endl;
             if (this->flag_initialxy) {
                 this->initial_y = Fl::event_y();
                 this->initial_x = Fl::event_x();
                 this->flag_initialxy = false;
-            } else {
-
-                this->flag_initialxy = true;
-                diff = this->initial_y - Fl::event_y();
-                //cout << "Difference:" << diff << endl;
-                this->translate_y = this->translate_y - (diff);
-                this->redraw();
             }
+            diff = this->initial_y - Fl::event_y();
+            this->translate_y = this->translate_y - (diff);
+            
+            if (diff != 0) {
+                this->initial_y = Fl::event_y();
+                this->initial_x = Fl::event_x();
+            }
+            
+            this->redraw();
 
             return(1);          // (tells caller we handled this event)
 
@@ -274,7 +274,6 @@ int PlotxyFLTK::handle(int e) {
         }
 
         if (Fl::event_button() == FL_LEFT_MOUSE) {
-            //cout << "ReleaseFl::event_button() == FL_LEFT_MOUS" << endl;
             this->initial_x = 0;
             this->initial_y = 0;
             this->flag_initialxy = true;
