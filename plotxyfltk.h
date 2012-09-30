@@ -59,7 +59,6 @@ class PlotxyFLTK: public Fl_Box {
         float *trace;//all value
         float *view;//showed values
         int insertsValues;//contains the values number acquired
-        //int initial_x, initial_y;
 
         float timeOut;//plot Timeout. it used from updateScope funtion
 
@@ -101,6 +100,10 @@ class PlotxyFLTK: public Fl_Box {
         //Used to plot line into graph
         bool plotLineInGraph;
         float plotLineInGraphValue;
+        
+        //Used to save clicked position
+        int initial_x, initial_y;
+        bool flag_initialxy;
 
         //******//
 
@@ -163,7 +166,6 @@ class PlotxyFLTK: public Fl_Box {
         //void insertValueToPlot(data_element value, int samplePerSecond=512);
         
         void addStringToGraph(const char *str);
-
 
         //CONVERTION FUNCTIONS
         int convertDataElementToFloat(data_element *dataelement, float *dataFloat, int nvalue);

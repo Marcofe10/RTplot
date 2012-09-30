@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
 //     for (i = 0,j=0.0;i < 2*N;j+=0.1,i++) {
 //         valori[i] = j;
 //     }
-    //scope->insertValuesToPlot(valori, PLOTTEDN);
+    scope->insertValuesToPlot(valori, PLOTTEDN,PLOTTEDN);
 //     scope1->insertValuesToPlot(valori, PLOTTEDN);
 //     scope1->setXAxis("prova");
     

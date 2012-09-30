@@ -67,8 +67,10 @@ PlotxyFLTK::PlotxyFLTK(int xp, int yp, int wp, int hp, const char* lp): Fl_Box(x
 //     trace = new float[trace_max];
 
 
-//     this->initial_x = 0;
-//     this->initial_y = 0;
+    this->initial_x = 0;
+    this->initial_y = 0;
+    this->flag_initialxy = true;
+
     this->vievedMaxValue = 0;
     this->vievedMinValue = 0;
 
@@ -216,19 +218,39 @@ void PlotxyFLTK::autoScaleBehaviour(Fl_Widget* widget, void* userdata) {
 int PlotxyFLTK::handle(int e) {
     int ret = Fl_Box::handle(e);
     Fl_Region regione;
+    int diff;
 
     switch (e) {
 
-//     case FL_DRAG:
-//
+    case FL_DRAG:
+
 //         if (Fl::event_state() == FL_LEFT_MOUSE) {
 //             cout << "entrooo" << endl;
 //             fl_color(FL_WHITE);
 //             fl_rect(0, 0, (int)Fl::event_x(), (int)Fl::event_y());
 //             //fl_draw_box(_FL_DIAMOND_DOWN_BOX,0,0,(int)Fl::event_x(), (int)Fl::event_y(),FL_WHITE);
 //         }
-//
-//         break;
+        if (Fl::event_button() == FL_LEFT_MOUSE) {
+
+            //cout << "Push Fl::event_button() == FL_LEFT_MOUS" << endl;
+            if (this->flag_initialxy) {
+                this->initial_y = Fl::event_y();
+                this->initial_x = Fl::event_x();
+                this->flag_initialxy = false;
+            } else {
+
+                this->flag_initialxy = true;
+                diff = this->initial_y - Fl::event_y();
+                //cout << "Difference:" << diff << endl;
+                this->translate_y = this->translate_y - (diff);
+                this->redraw();
+            }
+
+            return(1);          // (tells caller we handled this event)
+
+        }
+
+        break;
 
     case FL_PUSH:
         if (this->enableRightMouseMenu) {
@@ -242,10 +264,20 @@ int PlotxyFLTK::handle(int e) {
 
             return(1);//it allow to use FL_DRAG (see documentation)
         }
+
+        return(1);//it allow to use FL_DRAG (see documentation)
         break;
     case FL_RELEASE:
         // RIGHT MOUSE RELEASED? Mask it from Fl_Input
         if (Fl::event_button() == FL_RIGHT_MOUSE) {
+            return(1);          // (tells caller we handled this event)
+        }
+
+        if (Fl::event_button() == FL_LEFT_MOUSE) {
+            //cout << "ReleaseFl::event_button() == FL_LEFT_MOUS" << endl;
+            this->initial_x = 0;
+            this->initial_y = 0;
+            this->flag_initialxy = true;
             return(1);          // (tells caller we handled this event)
         }
 
