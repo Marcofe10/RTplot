@@ -22,7 +22,7 @@
 
 #define BUTTON_SIZE 95
 
-#include "plotxyfltk.h"
+#include "rtplot.h"
 #include "FL/Fl_Double_Window.H"
 #include "FL/Fl_Button.H"
 #include "FL/Fl_Check_Button.H"
@@ -59,8 +59,8 @@ class WinPlotXYFLTK: public Fl_Double_Window {
 
     public:
         WinPlotXYFLTK(int X, int Y, int W, int H, const char* l);
-        int insertValuesToPlot(float* value, int nvalue, int samplePerSecond = 512);
-        void insertValueToPlot(float value, int samplePerSecond = 512);
+        int insertValuesToPlot(float* value, int nvalue );
+        void insertValueToPlot(float value );
         
         void addStringToGraph(const char *str);
 

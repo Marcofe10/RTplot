@@ -1,6 +1,6 @@
 *** SVILUPPI FUTURI ***
 
-+ Possibilità che tenedo il bottone sinitro e spostando il mouse si sposta l'asse x lungo y
+
 
 
 + Il plot deve essere fatto sulla finestra di visualizzazione e non sui valori max trovati. Quindi deve essere fatta sui valori max e min visualizzati.
@@ -15,6 +15,7 @@
 
 
 *** O K ***
++ Possibilità che tenedo il bottone sinitro e spostando il mouse si sposta l'asse x lungo y(30092012)
 + Possibilità di ottenere FullScreen(ok 04/06)
 + Eliminare quello sfarfallio nel plot(usato Fl_Double_Window 070612.1905)
 + Plottare griglia(Posso migliorare)

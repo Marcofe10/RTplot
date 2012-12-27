@@ -114,8 +114,8 @@ void WinPlotXYFLTK::draw() {
 }
 
 
-void WinPlotXYFLTK::insertValueToPlot(float value, int samplePerSecond) {
-    this->plot->insertValueToPlot(value, samplePerSecond);
+void WinPlotXYFLTK::insertValueToPlot(float value) {
+    this->plot->insertValueToPlot(value);
 
     this->valueOutputZoomX->value(this->plot->getZoomXValue());
     this->valueOutputZoomY->value(this->plot->getZoomYValue());
@@ -123,10 +123,10 @@ void WinPlotXYFLTK::insertValueToPlot(float value, int samplePerSecond) {
     this->valueOutputTimeSimulations->value(this->plot->getSimulationSeconds());
 }
 
-int WinPlotXYFLTK::insertValuesToPlot(float* value, int nvalue, int samplePerSecond) {
+int WinPlotXYFLTK::insertValuesToPlot(float* value, int nvalue) {
     int rit;
 
-    rit = this->plot->insertValuesToPlot(value, nvalue, samplePerSecond);
+    rit = this->plot->insertValuesToPlot(value, nvalue);
 
     this->valueOutputZoomX->value(this->plot->getZoomXValue());
     this->valueOutputZoomY->value(this->plot->getZoomYValue());

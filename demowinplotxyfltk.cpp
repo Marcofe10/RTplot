@@ -35,7 +35,8 @@ void update_scope(void *valori) {
     int num;
     data_element *val = (data_element*)valori;
 
-    main_win->insertValueToPlot(val[k].value, 64);
+    
+    main_win->insertValueToPlot(val[k].value);
     k++;
 
 //     if (random() % 2)
